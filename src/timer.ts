@@ -2,14 +2,14 @@
 //! 25分の作業時間と5分の休憩時間を管理する。
 
 //! タイマーのモード。
-export type TimerMode = 'work' | 'break';
+export type TimerMode = 'work' | 'break' | 'debug';
 
 //! タイマーの状態。
 export type TimerStatus = 'idle' | 'running' | 'paused';
 
 //! タイマーの状態を表すインターフェース。
 export interface TimerState {
-	mode: TimerMode;              //! 'work' (25分) または 'break' (5分)。
+	mode: TimerMode;              //! 'work' (25分), 'break' (5分), または 'debug' (10秒)。
 	status: TimerStatus;          //! 'idle', 'running', 'paused'。
 	remainingSeconds: number;     //! 残り秒数。
 }
@@ -18,6 +18,7 @@ export interface TimerState {
 const MODE_DURATIONS: Record<TimerMode, number> = {
 	work: 1500,   //! 25分 = 1500秒。
 	break: 300,   //! 5分 = 300秒。
+	debug: 10,    //! デバッグ用 = 10秒。
 };
 
 //! タイマー完了時のコールバック関数の型。
@@ -58,12 +59,12 @@ export class Timer {
 
 	//! 1秒ごとに呼ばれる内部メソッド。
 	private tick(): void {
-		if (this.state.remainingSeconds > 0) {
-			this.state.remainingSeconds--;
-		}
+		//! 残り時間をデクリメント。
+		this.state.remainingSeconds--;
 
-		//! 残り時間が0になったら停止。
-		if (this.state.remainingSeconds === 0) {
+		//! 残り時間が0以下になったら停止。
+		if (this.state.remainingSeconds <= 0) {
+			this.state.remainingSeconds = 0;
 			this.stop();
 		}
 	}

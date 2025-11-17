@@ -32,6 +32,7 @@ class App {
 
 		//! イベントリスナーを設定。
 		this.setupEventListeners();
+		this.setupDebugButton();
 
 		//! 初期表示を更新。
 		this.updateDisplay();
@@ -116,7 +117,10 @@ class App {
 		this.timeDisplay.textContent = this.formatTime(state.remainingSeconds);
 
 		//! モード表示を更新。
-		this.modeDisplay.textContent = state.mode === 'work' ? 'Work' : 'Break';
+		this.modeDisplay.textContent =
+			state.mode === 'work' ? 'Work' :
+			state.mode === 'break' ? 'Break' :
+			'Debug';
 
 		//! ボタンの状態を更新。
 		this.updateButtons(state);
@@ -180,8 +184,14 @@ class App {
 			return;
 		}
 
-		const title = mode === 'work' ? '作業時間終了!' : '休憩時間終了!';
-		const body = mode === 'work' ? '25分の作業お疲れ様でした!' : '5分の休憩終了です!';
+		const title =
+			mode === 'work' ? '作業時間終了!' :
+			mode === 'break' ? '休憩時間終了!' :
+			'デバッグタイマー終了!';
+		const body =
+			mode === 'work' ? '25分の作業お疲れ様でした!' :
+			mode === 'break' ? '5分の休憩終了です!' :
+			'10秒のデバッグタイマーが終了しました!';
 
 		new Notification(title, {
 			body: body,
@@ -189,6 +199,19 @@ class App {
 			badge: '/icons/icon-96x96.png',
 		});
 	}
+
+	/* DEBUG_START - デバッグボタンのセットアップ */
+	private setupDebugButton(): void {
+		const debugBtn = document.getElementById('debug-btn');
+		if (debugBtn) {
+			debugBtn.addEventListener('click', () => {
+				this.timer.setMode('debug');
+				this.updateDisplay();
+				this.updateModeButtons();
+			});
+		}
+	}
+	/* DEBUG_END */
 }
 
 //! Service Workerを登録。
