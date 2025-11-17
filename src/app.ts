@@ -32,7 +32,6 @@ class App {
 
 		//! イベントリスナーを設定。
 		this.setupEventListeners();
-		this.setupDebugButton();
 
 		//! 初期表示を更新。
 		this.updateDisplay();
@@ -82,6 +81,9 @@ class App {
 			this.updateModeButtons();
 		});
 
+		//! カスタムタイマーボタン。
+		this.setupCustomTimer();
+
 		//! 1秒ごとに表示を更新。
 		this.startUpdateLoop();
 	}
@@ -118,7 +120,7 @@ class App {
 		this.modeDisplay.textContent =
 			state.mode === 'work' ? 'Work' :
 			state.mode === 'break' ? 'Break' :
-			'Debug';
+			'Custom';
 
 		//! ボタンの状態を更新。
 		this.updateButtons(state);
@@ -197,7 +199,7 @@ class App {
 		const message =
 			mode === 'work' ? '作業時間終了！お疲れ様でした！' :
 			mode === 'break' ? '休憩時間終了！' :
-			'デバッグタイマー終了！';
+			'カスタムタイマー終了！';
 		completeMessage.textContent = message;
 		completeMessage.classList.add('show');
 	}
@@ -224,11 +226,11 @@ class App {
 		const title =
 			mode === 'work' ? '作業時間終了!' :
 			mode === 'break' ? '休憩時間終了!' :
-			'デバッグタイマー終了!';
+			'カスタムタイマー終了!';
 		const body =
 			mode === 'work' ? '25分の作業お疲れ様でした!' :
 			mode === 'break' ? '5分の休憩終了です!' :
-			'10秒のデバッグタイマーが終了しました!';
+			'カスタムタイマーが終了しました!';
 
 		new Notification(title, {
 			body: body,
@@ -237,18 +239,38 @@ class App {
 		});
 	}
 
-	/* DEBUG_START - デバッグボタンのセットアップ */
-	private setupDebugButton(): void {
-		const debugBtn = document.getElementById('debug-btn');
-		if (debugBtn) {
-			debugBtn.addEventListener('click', () => {
-				this.timer.setMode('debug');
+	//! カスタムタイマーのセットアップ。
+	private setupCustomTimer(): void {
+		const customTimerBtn = document.getElementById('custom-timer-btn');
+		const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+
+		if (customTimerBtn && customMinutesInput) {
+			customTimerBtn.addEventListener('click', () => {
+				const minutes = parseInt(customMinutesInput.value, 10);
+
+				//! 入力値の検証。
+				if (isNaN(minutes) || minutes < 1 || minutes > 999) {
+					alert('1〜999分の範囲で入力してください。');
+					return;
+				}
+
+				//! カスタムタイマーを設定。
+				this.timer.setCustomMinutes(minutes);
 				this.updateDisplay();
 				this.updateModeButtons();
+
+				//! 入力欄をクリア。
+				customMinutesInput.value = '';
+			});
+
+			//! Enterキーでも設定できるようにする。
+			customMinutesInput.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+					customTimerBtn.click();
+				}
 			});
 		}
 	}
-	/* DEBUG_END */
 }
 
 //! Service Workerを登録。

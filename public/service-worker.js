@@ -1,6 +1,6 @@
 //! Service Worker - PWAのオフライン対応とキャッシュ管理。
 
-const CACHE_NAME = 'focus-timer-v10';
+const CACHE_NAME = 'focus-timer-v11';
 const urlsToCache = [
 	'/',
 	'/index.html',

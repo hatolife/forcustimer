@@ -76,8 +76,7 @@ h1 {
 
 /* 共通: Flexコンテナ */
 .controls,
-.mode-switch,
-.debug-section {
+.mode-switch {
 	display: flex;
 	gap: 10px;
 	justify-content: center;
@@ -90,10 +89,6 @@ h1 {
 
 .mode-switch {
 	margin-top: 30px;
-}
-
-.debug-section {
-	margin-top: 20px;
 }
 
 /* 共通: ボタンベーススタイル */
@@ -197,18 +192,49 @@ h1 {
 	}
 }
 
-/* DEBUG_START - デバッグ用スタイル */
-.debug-btn {
-	background: var(--color-debug);
-	color: var(--color-white);
-	border: 2px solid var(--color-debug);
+/* カスタムタイマー */
+.custom-timer-section {
+	margin-top: 30px;
+	padding-top: 20px;
+	border-top: 1px solid #e0e0e0;
 }
 
-.debug-btn:hover {
-	background: var(--color-debug-dark);
-	border-color: var(--color-debug-dark);
+.custom-timer-label {
+	display: block;
+	font-size: 0.9rem;
+	color: var(--color-text-light);
+	margin-bottom: 10px;
+	font-weight: 600;
 }
-/* DEBUG_END */
+
+.custom-timer-input-group {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	align-items: center;
+}
+
+.custom-timer-input {
+	padding: 12px 20px;
+	border: 2px solid var(--color-primary);
+	border-radius: var(--border-radius);
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: center;
+	width: 120px;
+	color: var(--color-text);
+}
+
+.custom-timer-input:focus {
+	outline: none;
+	border-color: var(--color-primary-dark);
+	background: var(--color-hover);
+}
+
+.custom-timer-input::placeholder {
+	color: var(--color-text-light);
+	font-weight: 400;
+}
 
 /* レスポンシブ対応 */
 @media (max-width: 600px) {
@@ -239,5 +265,9 @@ h1 {
 
 	.mode-btn {
 		max-width: 100%;
+	}
+
+	.custom-timer-input {
+		width: 100%;
 	}
 }

@@ -28,8 +28,19 @@ describe('App - UI Integration', () => {
 					<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
 				</div>
 
-				<div class="debug-section">
-					<button id="debug-btn" class="mode-btn debug-btn">Debug (10sec)</button>
+				<div class="custom-timer-section">
+					<label for="custom-minutes" class="custom-timer-label">Custom Timer (minutes):</label>
+					<div class="custom-timer-input-group">
+						<input
+							type="number"
+							id="custom-minutes"
+							class="custom-timer-input"
+							min="1"
+							max="999"
+							placeholder="e.g. 10"
+						/>
+						<button id="custom-timer-btn" class="btn btn-tertiary">Set</button>
+					</div>
 				</div>
 
 				<div id="complete-message" class="complete-message"></div>
@@ -298,44 +309,63 @@ describe('App - UI Integration', () => {
 		});
 	});
 
-	describe('デバッグモード', () => {
-		it('Debugボタンをクリックすると00:10に表示が変わること', () => {
+	describe('カスタムタイマー', () => {
+		it('カスタムタイマーで10分を設定すると10:00に表示が変わること', () => {
 			app = new App();
-			const debugBtn = document.getElementById('debug-btn') as HTMLButtonElement;
+			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			//! Debugモードに切替。
-			debugBtn.click();
+			//! 10分を入力してSetボタンをクリック。
+			customMinutesInput.value = '10';
+			customTimerBtn.click();
 
 			//! 表示を確認。
-			expect(timeDisplay?.textContent).toBe('00:10');
-			expect(modeDisplay?.textContent).toBe('Debug');
+			expect(timeDisplay?.textContent).toBe('10:00');
+			expect(modeDisplay?.textContent).toBe('Custom');
 		});
 
-		it('Debug完了時も通知が表示されること', () => {
+		it('カスタムタイマー完了時も通知が表示されること', () => {
 			const mockNotification = jest.fn();
 			global.Notification = mockNotification as any;
 			(global.Notification as any).permission = 'granted';
 
 			app = new App();
-			const debugBtn = document.getElementById('debug-btn') as HTMLButtonElement;
+			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 
-			debugBtn.click();
+			//! 1分(60秒)のカスタムタイマーを設定。
+			customMinutesInput.value = '1';
+			customTimerBtn.click();
 			startBtn.click();
 
-			//! 10秒経過してタイマー完了。
-			jest.advanceTimersByTime(10100);
+			//! 60秒経過してタイマー完了。
+			jest.advanceTimersByTime(60100);
 
 			//! 通知が呼ばれたことを確認。
 			expect(mockNotification).toHaveBeenCalledWith(
-				'デバッグタイマー終了!',
+				'カスタムタイマー終了!',
 				expect.objectContaining({
-					body: '10秒のデバッグタイマーが終了しました!',
+					body: 'カスタムタイマーが終了しました!',
 					icon: '/icons/icon-192x192.png',
 				})
 			);
+		});
+
+		it('Enterキーでもカスタムタイマーを設定できること', () => {
+			app = new App();
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const timeDisplay = document.getElementById('time');
+
+			//! 5分を入力してEnterキーを押す。
+			customMinutesInput.value = '5';
+			const enterEvent = new KeyboardEvent('keypress', { key: 'Enter' });
+			customMinutesInput.dispatchEvent(enterEvent);
+
+			//! 表示を確認。
+			expect(timeDisplay?.textContent).toBe('05:00');
 		});
 	});
 

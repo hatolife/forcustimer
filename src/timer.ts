@@ -2,14 +2,14 @@
 //! 25分の作業時間と5分の休憩時間を管理する。
 
 //! タイマーのモード。
-export type TimerMode = 'work' | 'break' | 'debug';
+export type TimerMode = 'work' | 'break' | 'custom';
 
 //! タイマーの状態。
 export type TimerStatus = 'idle' | 'running' | 'paused';
 
 //! タイマーの状態を表すインターフェース。
 export interface TimerState {
-	mode: TimerMode;              //! 'work' (25分), 'break' (5分), または 'debug' (10秒)。
+	mode: TimerMode;              //! 'work' (25分), 'break' (5分), または 'custom' (カスタム時間)。
 	status: TimerStatus;          //! 'idle', 'running', 'paused'。
 	remainingSeconds: number;     //! 残り秒数。
 }
@@ -18,7 +18,7 @@ export interface TimerState {
 const MODE_DURATIONS: Record<TimerMode, number> = {
 	work: 1500,   //! 25分 = 1500秒。
 	break: 300,   //! 5分 = 300秒。
-	debug: 10,    //! デバッグ用 = 10秒。
+	custom: 600,  //! カスタムタイマー = 10分 (デフォルト)。
 };
 
 //! タイマー完了時のコールバック関数の型。
@@ -138,5 +138,25 @@ export class Timer {
 		this.state.mode = mode;
 		this.state.status = 'idle';
 		this.state.remainingSeconds = MODE_DURATIONS[mode];
+	}
+
+	//! カスタムタイマーの時間を設定する。
+	//! モードをcustomに変更し、指定した分数を設定。
+	setCustomMinutes(minutes: number): void {
+		//! 実行中のタイマーを停止。
+		if (this.intervalId !== null) {
+			clearInterval(this.intervalId);
+			this.intervalId = null;
+		}
+
+		//! 分数を秒数に変換。
+		const seconds = minutes * 60;
+
+		//! カスタムモードのデフォルト時間を更新。
+		MODE_DURATIONS.custom = seconds;
+
+		this.state.mode = 'custom';
+		this.state.status = 'idle';
+		this.state.remainingSeconds = seconds;
 	}
 }

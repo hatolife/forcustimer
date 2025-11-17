@@ -30,12 +30,21 @@
 			<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
 		</div>
 
-		<!-- デバッグ用: 後で削除しやすいようコメントで囲む -->
-		<!-- DEBUG_START -->
-		<div class="debug-section">
-			<button id="debug-btn" class="mode-btn debug-btn">Debug (10sec)</button>
+		<!-- カスタムタイマー -->
+		<div class="custom-timer-section">
+			<label for="custom-minutes" class="custom-timer-label">Custom Timer (minutes):</label>
+			<div class="custom-timer-input-group">
+				<input
+					type="number"
+					id="custom-minutes"
+					class="custom-timer-input"
+					min="1"
+					max="999"
+					placeholder="e.g. 10"
+				/>
+				<button id="custom-timer-btn" class="btn btn-tertiary">Set</button>
+			</div>
 		</div>
-		<!-- DEBUG_END -->
 
 		<!-- 完了メッセージ -->
 		<div id="complete-message" class="complete-message"></div>
