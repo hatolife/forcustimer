@@ -29,6 +29,8 @@ export class Timer {
 	private state: TimerState;
 	private intervalId: number | null = null;
 	private onComplete?: TimerCompleteCallback;
+	private startTime: number = 0;           //! タイマー開始時刻(ミリ秒)。
+	private totalDuration: number = 0;       //! タイマーの総時間(秒)。
 
 	//! コンストラクタ。
 	//! 初期状態: work mode, idle status, 1500秒(25分)。
@@ -42,7 +44,7 @@ export class Timer {
 	}
 
 	//! タイマーを開始する。
-	//! statusをrunningに変更し、1秒ごとにremainingSecondsをデクリメント。
+	//! statusをrunningに変更し、開始時刻を記録。
 	start(): void {
 		//! 既にrunning状態の場合は何もしない(重複起動を防ぐ)。
 		if (this.state.status === 'running') {
@@ -51,18 +53,26 @@ export class Timer {
 
 		this.state.status = 'running';
 
-		//! 1秒ごとにカウントダウン。
+		//! 開始時刻と総時間を記録。
+		this.startTime = Date.now();
+		this.totalDuration = this.state.remainingSeconds;
+
+		//! 100msごとに時刻ベースで更新(バックグラウンドでも正確)。
 		this.intervalId = window.setInterval(() => {
 			this.tick();
-		}, 1000);
+		}, 100);
 	}
 
-	//! 1秒ごとに呼ばれる内部メソッド。
+	//! 100msごとに呼ばれる内部メソッド。
+	//! 開始時刻からの経過時間を計算して残り時間を更新。
 	private tick(): void {
-		//! 残り時間をデクリメント。
-		this.state.remainingSeconds--;
+		//! 経過時間を計算(秒単位)。
+		const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
 
-		//! 残り時間が0以下になったら停止。
+		//! 残り時間を計算。
+		this.state.remainingSeconds = Math.max(0, this.totalDuration - elapsedSeconds);
+
+		//! 残り時間が0になったら停止。
 		if (this.state.remainingSeconds <= 0) {
 			this.state.remainingSeconds = 0;
 			this.stop();
@@ -85,8 +95,11 @@ export class Timer {
 
 	//! タイマーを一時停止する。
 	//! statusをpausedに変更し、カウントダウンを停止。
+	//! 現在の残り時間を保持。
 	pause(): void {
 		if (this.intervalId !== null) {
+			//! 最新の残り時間を計算してから停止。
+			this.tick();
 			clearInterval(this.intervalId);
 			this.intervalId = null;
 		}
