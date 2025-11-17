@@ -20,19 +20,24 @@ const MODE_DURATIONS: Record<TimerMode, number> = {
 	break: 300,   //! 5分 = 300秒。
 };
 
+//! タイマー完了時のコールバック関数の型。
+export type TimerCompleteCallback = (mode: TimerMode) => void;
+
 //! ポモドーロタイマークラス。
 export class Timer {
 	private state: TimerState;
 	private intervalId: number | null = null;
+	private onComplete?: TimerCompleteCallback;
 
 	//! コンストラクタ。
 	//! 初期状態: work mode, idle status, 1500秒(25分)。
-	constructor() {
+	constructor(onComplete?: TimerCompleteCallback) {
 		this.state = {
 			mode: 'work',
 			status: 'idle',
 			remainingSeconds: MODE_DURATIONS.work,
 		};
+		this.onComplete = onComplete;
 	}
 
 	//! タイマーを開始する。
@@ -70,6 +75,11 @@ export class Timer {
 			this.intervalId = null;
 		}
 		this.state.status = 'idle';
+
+		//! 完了コールバックを呼び出す。
+		if (this.onComplete) {
+			this.onComplete(this.state.mode);
+		}
 	}
 
 	//! タイマーを一時停止する。

@@ -218,4 +218,77 @@ describe('App - UI Integration', () => {
 			expect(timeDisplay?.textContent).toBe('24:59');
 		});
 	});
+
+	describe('通知機能', () => {
+		beforeEach(() => {
+			//! Notification APIのモック。
+			global.Notification = {
+				permission: 'granted',
+				requestPermission: jest.fn().mockResolvedValue('granted'),
+			} as any;
+		});
+
+		it('タイマー完了時に通知が表示されること', () => {
+			const mockNotification = jest.fn();
+			global.Notification = mockNotification as any;
+			(global.Notification as any).permission = 'granted';
+
+			app = new App();
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			startBtn.click();
+
+			//! 25分経過してタイマー完了。
+			jest.advanceTimersByTime(1500100);
+
+			//! 通知が呼ばれたことを確認。
+			expect(mockNotification).toHaveBeenCalledWith(
+				'作業時間終了!',
+				expect.objectContaining({
+					body: '25分の作業お疲れ様でした!',
+					icon: '/icons/icon-192x192.png',
+				})
+			);
+		});
+
+		it('Break完了時も通知が表示されること', () => {
+			const mockNotification = jest.fn();
+			global.Notification = mockNotification as any;
+			(global.Notification as any).permission = 'granted';
+
+			app = new App();
+			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			breakBtn.click();
+			startBtn.click();
+
+			//! 5分経過してタイマー完了。
+			jest.advanceTimersByTime(300100);
+
+			//! 通知が呼ばれたことを確認。
+			expect(mockNotification).toHaveBeenCalledWith(
+				'休憩時間終了!',
+				expect.objectContaining({
+					body: '5分の休憩終了です!',
+					icon: '/icons/icon-192x192.png',
+				})
+			);
+		});
+
+		it('通知許可がない場合は通知が表示されないこと', () => {
+			const mockNotification = jest.fn();
+			global.Notification = mockNotification as any;
+			(global.Notification as any).permission = 'denied';
+
+			app = new App();
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			startBtn.click();
+			jest.advanceTimersByTime(1500100);
+
+			//! 通知が呼ばれないことを確認。
+			expect(mockNotification).not.toHaveBeenCalled();
+		});
+	});
 });

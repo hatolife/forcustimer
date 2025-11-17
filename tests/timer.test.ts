@@ -206,4 +206,70 @@ describe('Timer', () => {
 			expect(timer.getState().remainingSeconds).toBe(1499);
 		});
 	});
+
+	describe('通知コールバック', () => {
+		beforeEach(() => {
+			jest.useFakeTimers();
+		});
+
+		afterEach(() => {
+			jest.useRealTimers();
+		});
+
+		it('タイマー完了時にコールバックが呼ばれること', () => {
+			const onComplete = jest.fn();
+			timer = new Timer(onComplete);
+
+			//! 残り2秒の状態を作る。
+			timer.start();
+			jest.advanceTimersByTime(1498000);
+
+			//! まだ完了していない。
+			expect(onComplete).not.toHaveBeenCalled();
+
+			//! 残り2秒→1秒→0秒。
+			jest.advanceTimersByTime(2000);
+
+			//! 完了時にコールバックが呼ばれる。
+			expect(onComplete).toHaveBeenCalledTimes(1);
+			expect(onComplete).toHaveBeenCalledWith('work');
+		});
+
+		it('break モード完了時もコールバックが呼ばれること', () => {
+			const onComplete = jest.fn();
+			timer = new Timer(onComplete);
+
+			timer.setMode('break');
+			timer.start();
+
+			//! 5分 = 300秒完了。
+			jest.advanceTimersByTime(300000);
+
+			expect(onComplete).toHaveBeenCalledTimes(1);
+			expect(onComplete).toHaveBeenCalledWith('break');
+		});
+
+		it('コールバックなしでもエラーにならないこと', () => {
+			timer = new Timer();
+			timer.start();
+
+			//! 25分完了してもエラーにならない。
+			expect(() => {
+				jest.advanceTimersByTime(1500000);
+			}).not.toThrow();
+		});
+
+		it('pause中はコールバックが呼ばれないこと', () => {
+			const onComplete = jest.fn();
+			timer = new Timer(onComplete);
+
+			timer.start();
+			jest.advanceTimersByTime(1000);
+			timer.pause();
+
+			//! いくら時間が経過してもコールバックは呼ばれない。
+			jest.advanceTimersByTime(10000000);
+			expect(onComplete).not.toHaveBeenCalled();
+		});
+	});
 });

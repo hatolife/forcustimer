@@ -1,6 +1,6 @@
 //! UIとTimerクラスを統合するメインアプリケーション。
 
-import { Timer, TimerState } from './timer';
+import { Timer, TimerState, TimerMode } from './timer';
 
 //! アプリケーションクラス。
 class App {
@@ -15,8 +15,11 @@ class App {
 	private updateIntervalId: number | null = null;
 
 	constructor() {
-		//! Timerインスタンスを作成。
-		this.timer = new Timer();
+		//! 通知許可をリクエスト。
+		this.requestNotificationPermission();
+
+		//! Timerインスタンスを作成(完了コールバック付き)。
+		this.timer = new Timer((mode) => this.onTimerComplete(mode));
 
 		//! DOM要素を取得。
 		this.timeDisplay = this.getElement('time');
@@ -157,6 +160,34 @@ class App {
 			this.workModeBtn.classList.remove('active');
 			this.breakModeBtn.classList.add('active');
 		}
+	}
+
+	//! 通知許可をリクエスト。
+	private requestNotificationPermission(): void {
+		if ('Notification' in window && Notification.permission === 'default') {
+			Notification.requestPermission();
+		}
+	}
+
+	//! タイマー完了時のコールバック。
+	private onTimerComplete(mode: TimerMode): void {
+		this.showNotification(mode);
+	}
+
+	//! 通知を表示。
+	private showNotification(mode: TimerMode): void {
+		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		const title = mode === 'work' ? '作業時間終了!' : '休憩時間終了!';
+		const body = mode === 'work' ? '25分の作業お疲れ様でした!' : '5分の休憩終了です!';
+
+		new Notification(title, {
+			body: body,
+			icon: '/icons/icon-192x192.png',
+			badge: '/icons/icon-96x96.png',
+		});
 	}
 }
 

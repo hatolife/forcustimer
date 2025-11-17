@@ -30,7 +30,12 @@
 - 上記3つのボタン以外のUI要素は含めない
 - 時間のカスタマイズ機能なし
 - 統計・履歴機能なし
-- 通知機能なし (最小限の実装)
+
+### 通知機能
+- タイマー完了時にブラウザ通知を表示
+- デスクトップ・スマートフォン両対応
+- 初回アクセス時に通知許可を要求
+- Web Notifications APIを使用
 
 ### PWA要件
 - オフラインで動作可能
@@ -96,7 +101,9 @@ class Timer {
 2. startボタン: running statusに変更、1秒ごとにremainingSecondsをデクリメント
 3. pauseボタン: paused statusに変更、カウントダウン停止
 4. resetボタン: idle statusに変更、remainingSecondsをモードのデフォルト値にリセット
-5. remainingSecondsが0になったら自動的にidle statusに戻る
+5. remainingSecondsが0になったら:
+   - 自動的にidle statusに戻る
+   - ブラウザ通知を表示 (通知許可がある場合)
 
 ## テスト要件
 - Timer クラスの単体テスト
