@@ -94,10 +94,7 @@ class App {
 
 		//! 100msごとにチェックして滑らかに更新。
 		this.updateIntervalId = window.setInterval(() => {
-			const state = this.timer.getState();
-			if (state.status === 'running') {
-				this.updateDisplay();
-			}
+			this.updateDisplay();
 		}, 100);
 	}
 
@@ -175,6 +172,9 @@ class App {
 
 	//! タイマー完了時のコールバック。
 	private onTimerComplete(mode: TimerMode): void {
+		//! 表示を即座に更新 (00:00を表示)。
+		this.updateDisplay();
+		//! 通知を表示。
 		this.showNotification(mode);
 	}
 
