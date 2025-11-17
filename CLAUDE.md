@@ -107,6 +107,7 @@ class Timer {
 - プルリクエスト時に自動テスト実行
 - mainブランチへのpush時にGitHub Pagesへ自動デプロイ
 - テスト失敗時はデプロイしない
+- 公開URL: https://focus.hato.life/
 
 ## 開発手順
 1. 仕様書作成 (このファイル) ✓
