@@ -132,3 +132,6 @@ Angular Conventional Commit形式に従う:
 - refactor: リファクタリング
 
 例: `feat: Timerクラスの基本機能を実装`
+
+## ライセンス
+CC0 1.0 Universal (Public Domain)

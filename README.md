@@ -86,7 +86,7 @@ forcustimer/
 
 ## ライセンス
 
-MIT
+CC0 1.0 Universal (Public Domain)
 
 ## 作者
 

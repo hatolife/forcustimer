@@ -12,6 +12,7 @@ class App {
 	private resetBtn: HTMLButtonElement;
 	private workModeBtn: HTMLButtonElement;
 	private breakModeBtn: HTMLButtonElement;
+	private updateIntervalId: number | null = null;
 
 	constructor() {
 		//! Timerインスタンスを作成。
@@ -77,12 +78,31 @@ class App {
 		});
 
 		//! 1秒ごとに表示を更新。
-		setInterval(() => {
+		this.startUpdateLoop();
+	}
+
+	//! 表示更新ループを開始。
+	private startUpdateLoop(): void {
+		//! 既に実行中の場合は停止。
+		if (this.updateIntervalId !== null) {
+			clearInterval(this.updateIntervalId);
+		}
+
+		//! 100msごとにチェックして滑らかに更新。
+		this.updateIntervalId = window.setInterval(() => {
 			const state = this.timer.getState();
 			if (state.status === 'running') {
 				this.updateDisplay();
 			}
-		}, 100); //! 100msごとにチェックして滑らかに更新。
+		}, 100);
+	}
+
+	//! 表示更新ループを停止。
+	destroy(): void {
+		if (this.updateIntervalId !== null) {
+			clearInterval(this.updateIntervalId);
+			this.updateIntervalId = null;
+		}
 	}
 
 	//! 表示を更新。
