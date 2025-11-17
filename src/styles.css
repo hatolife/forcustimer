@@ -149,6 +149,67 @@ h1 {
 	color: white;
 }
 
+/* タイマー完了時のスタイル */
+.timer-display.completed {
+	animation: completePulse 1s ease-in-out 3;
+}
+
+@keyframes completePulse {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+}
+
+.time.completed {
+	color: #4caf50;
+	font-weight: 900;
+	animation: completeBlink 0.5s ease-in-out 6;
+}
+
+@keyframes completeBlink {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.3;
+	}
+}
+
+.container.completed {
+	background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+	transition: background 0.5s ease;
+}
+
+.complete-message {
+	display: none;
+	margin-top: 20px;
+	padding: 15px 30px;
+	background: #4caf50;
+	color: white;
+	border-radius: 10px;
+	font-size: 1.2rem;
+	font-weight: 600;
+	animation: slideIn 0.5s ease-out;
+}
+
+.complete-message.show {
+	display: block;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
 /* DEBUG_START - デバッグ用スタイル */
 .debug-section {
 	display: flex;

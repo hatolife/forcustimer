@@ -31,6 +31,8 @@ describe('App - UI Integration', () => {
 				<div class="debug-section">
 					<button id="debug-btn" class="mode-btn debug-btn">Debug (10sec)</button>
 				</div>
+
+				<div id="complete-message" class="complete-message"></div>
 			</div>
 		`;
 

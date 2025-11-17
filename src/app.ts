@@ -51,6 +51,7 @@ class App {
 	private setupEventListeners(): void {
 		//! Startボタン。
 		this.startBtn.addEventListener('click', () => {
+			this.clearCompletionEffects();
 			this.timer.start();
 			this.updateDisplay();
 		});
@@ -113,11 +114,6 @@ class App {
 		//! 時間表示を更新。
 		this.timeDisplay.textContent = this.formatTime(state.remainingSeconds);
 
-		//! デバッグ: 最後の5秒をログ出力。
-		if (state.remainingSeconds <= 5) {
-			console.log(`[DEBUG] Timer state: ${state.remainingSeconds}s, status: ${state.status}, display: ${this.timeDisplay.textContent}`);
-		}
-
 		//! モード表示を更新。
 		this.modeDisplay.textContent =
 			state.mode === 'work' ? 'Work' :
@@ -179,8 +175,49 @@ class App {
 	private onTimerComplete(mode: TimerMode): void {
 		//! 表示を即座に更新 (00:00を表示)。
 		this.updateDisplay();
+		//! 完了時のUI効果を適用。
+		this.showCompletionEffects(mode);
 		//! 通知を表示。
 		this.showNotification(mode);
+	}
+
+	//! 完了時のUI効果を表示。
+	private showCompletionEffects(mode: TimerMode): void {
+		const container = document.querySelector('.container');
+		const timerDisplay = document.querySelector('.timer-display');
+		const timeDisplay = document.querySelector('.time');
+		const completeMessage = this.getElement('complete-message');
+
+		//! 完了クラスを追加。
+		container?.classList.add('completed');
+		timerDisplay?.classList.add('completed');
+		timeDisplay?.classList.add('completed');
+
+		//! 完了メッセージを設定して表示。
+		const message =
+			mode === 'work' ? '作業時間終了！お疲れ様でした！' :
+			mode === 'break' ? '休憩時間終了！' :
+			'デバッグタイマー終了！';
+		completeMessage.textContent = message;
+		completeMessage.classList.add('show');
+
+		//! 5秒後に完了効果を削除。
+		setTimeout(() => {
+			this.clearCompletionEffects();
+		}, 5000);
+	}
+
+	//! 完了効果をクリア。
+	private clearCompletionEffects(): void {
+		const container = document.querySelector('.container');
+		const timerDisplay = document.querySelector('.timer-display');
+		const timeDisplay = document.querySelector('.time');
+		const completeMessage = this.getElement('complete-message');
+
+		container?.classList.remove('completed');
+		timerDisplay?.classList.remove('completed');
+		timeDisplay?.classList.remove('completed');
+		completeMessage.classList.remove('show');
 	}
 
 	//! 通知を表示。
