@@ -113,6 +113,11 @@ class App {
 		//! 時間表示を更新。
 		this.timeDisplay.textContent = this.formatTime(state.remainingSeconds);
 
+		//! デバッグ: 最後の5秒をログ出力。
+		if (state.remainingSeconds <= 5) {
+			console.log(`[DEBUG] Timer state: ${state.remainingSeconds}s, status: ${state.status}, display: ${this.timeDisplay.textContent}`);
+		}
+
 		//! モード表示を更新。
 		this.modeDisplay.textContent =
 			state.mode === 'work' ? 'Work' :
