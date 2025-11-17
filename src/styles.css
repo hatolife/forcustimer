@@ -182,17 +182,3 @@ h1 {
 		max-width: 100%;
 	}
 }
-
-/* アニメーション */
-@keyframes pulse {
-	0%, 100% {
-		transform: scale(1);
-	}
-	50% {
-		transform: scale(1.05);
-	}
-}
-
-.time.running {
-	animation: pulse 2s ease-in-out infinite;
-}

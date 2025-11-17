@@ -117,13 +117,6 @@ class App {
 
 		//! ボタンの状態を更新。
 		this.updateButtons(state);
-
-		//! アニメーション効果。
-		if (state.status === 'running') {
-			this.timeDisplay.classList.add('running');
-		} else {
-			this.timeDisplay.classList.remove('running');
-		}
 	}
 
 	//! 秒数をMM:SS形式にフォーマット。

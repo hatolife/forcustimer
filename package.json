@@ -7,9 +7,10 @@
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage",
-		"build": "tsc && npm run fix-imports && npm run copy-files",
+		"build": "tsc && npm run fix-imports && npm run generate-icons && npm run copy-files",
 		"fix-imports": "node scripts/fix-imports.js",
-		"copy-files": "mkdir -p dist && cp src/index.html dist/ && cp src/styles.css dist/ && (cp public/manifest.json dist/ || true) && (cp -r public/icons dist/ || true) && (cp public/service-worker.js dist/ || true)",
+		"generate-icons": "node scripts/generate-icons.js",
+		"copy-files": "mkdir -p dist && cp src/index.html dist/ && cp src/styles.css dist/ && (cp public/manifest.json dist/ || true) && (cp public/service-worker.js dist/ || true)",
 		"serve": "npx http-server dist -p 8080",
 		"dev": "npm run build && npm run serve"
 	},
