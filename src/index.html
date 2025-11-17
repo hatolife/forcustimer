@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="シンプルなポモドーロタイマー - 25分作業、5分休憩">
+	<meta name="theme-color" content="#ff6b6b">
+	<title>Focus Timer</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="manifest" href="manifest.json">
+	<link rel="icon" type="image/png" href="icons/icon-192x192.png">
+</head>
+<body>
+	<div class="container">
+		<h1>Focus Timer</h1>
+
+		<div class="timer-display">
+			<div id="mode" class="mode">Work</div>
+			<div id="time" class="time">25:00</div>
+		</div>
+
+		<div class="controls">
+			<button id="start-btn" class="btn btn-primary">Start</button>
+			<button id="pause-btn" class="btn btn-secondary" disabled>Pause</button>
+			<button id="reset-btn" class="btn btn-tertiary" disabled>Reset</button>
+		</div>
+
+		<div class="mode-switch">
+			<button id="work-mode-btn" class="mode-btn active">Work (25min)</button>
+			<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
+		</div>
+	</div>
+
+	<script type="module" src="app.js"></script>
+</body>
+</html>
