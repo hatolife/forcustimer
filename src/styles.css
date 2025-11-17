@@ -166,16 +166,6 @@ h1 {
 .time.completed {
 	color: #4caf50;
 	font-weight: 900;
-	animation: completeBlink 0.5s ease-in-out 6;
-}
-
-@keyframes completeBlink {
-	0%, 100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.3;
-	}
 }
 
 .container.completed {

@@ -200,11 +200,6 @@ class App {
 			'デバッグタイマー終了！';
 		completeMessage.textContent = message;
 		completeMessage.classList.add('show');
-
-		//! 5秒後に完了効果を削除。
-		setTimeout(() => {
-			this.clearCompletionEffects();
-		}, 5000);
 	}
 
 	//! 完了効果をクリア。
