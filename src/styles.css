@@ -92,26 +92,14 @@ h1 {
 	color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
-	background: #5568d3;
-}
-
 .btn-secondary {
 	background: #f093fb;
 	color: white;
 }
 
-.btn-secondary:hover:not(:disabled) {
-	background: #e07ce8;
-}
-
 .btn-tertiary {
 	background: #4facfe;
 	color: white;
-}
-
-.btn-tertiary:hover:not(:disabled) {
-	background: #3a93e5;
 }
 
 /* モード切替ボタン */
@@ -145,14 +133,17 @@ h1 {
 }
 
 /* タイマー完了時のスタイル */
+/* アニメーションなし - v7で削除済み */
 .time.completed {
 	color: #4caf50;
 	font-weight: 900;
+	/* transform や animation は削除済み */
 }
 
 .container.completed {
 	background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
 	transition: background 0.5s ease;
+	/* transform や animation は削除済み */
 }
 
 .complete-message {
