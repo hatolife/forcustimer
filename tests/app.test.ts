@@ -27,6 +27,10 @@ describe('App - UI Integration', () => {
 					<button id="work-mode-btn" class="mode-btn active">Work (25min)</button>
 					<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
 				</div>
+
+				<div class="debug-section">
+					<button id="debug-btn" class="mode-btn debug-btn">Debug (10sec)</button>
+				</div>
 			</div>
 		`;
 
@@ -289,6 +293,86 @@ describe('App - UI Integration', () => {
 
 			//! 通知が呼ばれないことを確認。
 			expect(mockNotification).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('デバッグモード', () => {
+		it('Debugボタンをクリックすると00:10に表示が変わること', () => {
+			app = new App();
+			const debugBtn = document.getElementById('debug-btn') as HTMLButtonElement;
+			const timeDisplay = document.getElementById('time');
+			const modeDisplay = document.getElementById('mode');
+
+			//! Debugモードに切替。
+			debugBtn.click();
+
+			//! 表示を確認。
+			expect(timeDisplay?.textContent).toBe('00:10');
+			expect(modeDisplay?.textContent).toBe('Debug');
+		});
+
+		it('Debug完了時も通知が表示されること', () => {
+			const mockNotification = jest.fn();
+			global.Notification = mockNotification as any;
+			(global.Notification as any).permission = 'granted';
+
+			app = new App();
+			const debugBtn = document.getElementById('debug-btn') as HTMLButtonElement;
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			debugBtn.click();
+			startBtn.click();
+
+			//! 10秒経過してタイマー完了。
+			jest.advanceTimersByTime(10100);
+
+			//! 通知が呼ばれたことを確認。
+			expect(mockNotification).toHaveBeenCalledWith(
+				'デバッグタイマー終了!',
+				expect.objectContaining({
+					body: '10秒のデバッグタイマーが終了しました!',
+					icon: '/icons/icon-192x192.png',
+				})
+			);
+		});
+	});
+
+	describe('通知許可リクエスト', () => {
+		it('Notification.permission が default の場合にリクエストが呼ばれること', () => {
+			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
+			global.Notification = {
+				permission: 'default',
+				requestPermission: mockRequestPermission,
+			} as any;
+
+			app = new App();
+
+			expect(mockRequestPermission).toHaveBeenCalledTimes(1);
+		});
+
+		it('Notification.permission が granted の場合にリクエストが呼ばれないこと', () => {
+			const mockRequestPermission = jest.fn();
+			global.Notification = {
+				permission: 'granted',
+				requestPermission: mockRequestPermission,
+			} as any;
+
+			app = new App();
+
+			expect(mockRequestPermission).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('エラーハンドリング', () => {
+		it('存在しないDOM要素を取得しようとするとエラーが投げられること', () => {
+			//! start-btnを削除。
+			const startBtn = document.getElementById('start-btn');
+			startBtn?.remove();
+
+			//! Appインスタンス作成時にエラーが投げられることを確認。
+			expect(() => {
+				new App();
+			}).toThrow('Element with id "start-btn" not found');
 		});
 	});
 });
