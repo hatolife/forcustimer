@@ -147,10 +147,27 @@ class App {
 	}
 }
 
+//! Service Workerを登録。
+function registerServiceWorker(): void {
+	if ('serviceWorker' in navigator) {
+		window.addEventListener('load', () => {
+			navigator.serviceWorker
+				.register('/service-worker.js')
+				.then((registration) => {
+					console.log('Service Worker registered:', registration);
+				})
+				.catch((error) => {
+					console.log('Service Worker registration failed:', error);
+				});
+		});
+	}
+}
+
 //! DOMが読み込まれたらアプリケーションを起動。
 if (typeof document !== 'undefined') {
 	document.addEventListener('DOMContentLoaded', () => {
 		new App();
+		registerServiceWorker();
 	});
 }
 

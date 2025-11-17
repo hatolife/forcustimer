@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install)",
+      "Bash(npm test)",
+      "Bash(npm run build)",
+      "Bash(chmod:*)",
+      "Bash(for size in 72 96 128 144 152 192 384 512)",
+      "Bash(do cp icon.svg icon-$sizex$size.png)",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
