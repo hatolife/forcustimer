@@ -188,10 +188,17 @@ class App {
 		const timeDisplay = document.querySelector('.time');
 		const completeMessage = this.getElement('complete-message');
 
+		console.log('[DEBUG] showCompletionEffects called, mode:', mode);
+
 		//! 完了クラスを追加。
 		container?.classList.add('completed');
 		timerDisplay?.classList.add('completed');
 		timeDisplay?.classList.add('completed');
+
+		console.log('[DEBUG] Added completed classes');
+		console.log('[DEBUG] container.classList:', container?.classList.toString());
+		console.log('[DEBUG] timerDisplay.classList:', timerDisplay?.classList.toString());
+		console.log('[DEBUG] timeDisplay.classList:', timeDisplay?.classList.toString());
 
 		//! 完了メッセージを設定して表示。
 		const message =
@@ -204,6 +211,9 @@ class App {
 
 	//! 完了効果をクリア。
 	private clearCompletionEffects(): void {
+		console.log('[DEBUG] clearCompletionEffects called');
+		console.trace('[DEBUG] clearCompletionEffects stack trace');
+
 		const container = document.querySelector('.container');
 		const timerDisplay = document.querySelector('.timer-display');
 		const timeDisplay = document.querySelector('.time');
@@ -213,6 +223,8 @@ class App {
 		timerDisplay?.classList.remove('completed');
 		timeDisplay?.classList.remove('completed');
 		completeMessage.classList.remove('show');
+
+		console.log('[DEBUG] Removed completed classes');
 	}
 
 	//! 通知を表示。
