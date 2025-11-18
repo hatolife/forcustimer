@@ -311,7 +311,7 @@ h1 {
 	/* ボタンの高さを確保しつつ横幅を最適化 */
 	.btn {
 		padding: 12px 8px;
-		font-size: 3vw;
+		font-size: clamp(11px, 3vw, 16px);
 		letter-spacing: 0.3px;
 		min-height: 44px;
 	}
@@ -325,7 +325,7 @@ h1 {
 
 	.mode-btn {
 		padding: 10px 8px;
-		font-size: 2.8vw;
+		font-size: clamp(10px, 2.8vw, 14px);
 		letter-spacing: 0.3px;
 		min-height: 40px;
 	}
@@ -339,6 +339,6 @@ h1 {
 	.complete-message {
 		margin: 10px 5px;
 		padding: 8px 10px;
-		font-size: 3.5vw;
+		font-size: clamp(11px, 3.5vw, 16px);
 	}
 }
