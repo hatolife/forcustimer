@@ -269,9 +269,14 @@ class App {
 		completeMessage.classList.remove('show');
 	}
 
-	//! 通知を表示。
+	//! 通知を表示（Service Worker経由・iOS PWA対応）。
 	private showNotification(mode: TimerMode): void {
 		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		//! Service Workerが利用できない場合は何もしない。
+		if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
 			return;
 		}
 
@@ -284,10 +289,15 @@ class App {
 			mode === 'break' ? '5分の休憩終了です!' :
 			'カスタムタイマーが終了しました!';
 
-		new Notification(title, {
-			body: body,
-			icon: '/icons/icon-192x192.png',
-			badge: '/icons/icon-96x96.png',
+		//! Service Workerへメッセージを送信。
+		navigator.serviceWorker.controller.postMessage({
+			type: 'SHOW_NOTIFICATION',
+			payload: {
+				title: title,
+				body: body,
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+			},
 		});
 	}
 
