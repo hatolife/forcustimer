@@ -369,8 +369,52 @@ describe('App - UI Integration', () => {
 		});
 	});
 
-	describe('通知許可リクエスト', () => {
-		it('Notification.permission が default の場合にリクエストが呼ばれること', () => {
+	describe('通知許可ベルアイコン（iOS PWA対応）', () => {
+		beforeEach(() => {
+			//! ベルアイコンボタンのHTMLを追加。
+			const bellButton = `
+				<button id="notification-bell" class="notification-bell" aria-label="通知設定">
+					<svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+						<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+						<line class="bell-slash" x1="2" y1="2" x2="22" y2="22" stroke-width="2"></line>
+					</svg>
+				</button>
+			`;
+			document.body.insertAdjacentHTML('beforeend', bellButton);
+		});
+
+		it('通知許可がない場合、ベルアイコンに斜線が表示されること', () => {
+			global.Notification = {
+				permission: 'default',
+				requestPermission: jest.fn().mockResolvedValue('granted'),
+			} as any;
+
+			app = new App();
+
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+			expect(bellSlash?.style.display).not.toBe('none');
+		});
+
+		it('通知許可がある場合、ベルアイコンに斜線が表示されないこと', () => {
+			global.Notification = {
+				permission: 'granted',
+				requestPermission: jest.fn(),
+			} as any;
+
+			app = new App();
+
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			expect(bellIcon?.classList.contains('disabled')).toBe(false);
+			expect(bellSlash?.style.display).toBe('none');
+		});
+
+		it('ベルアイコンをクリックすると通知許可ダイアログが表示されること', async () => {
 			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
 				permission: 'default',
@@ -379,19 +423,72 @@ describe('App - UI Integration', () => {
 
 			app = new App();
 
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			bellButton.click();
+
+			//! Promiseの解決を待つ。
+			await Promise.resolve();
+
 			expect(mockRequestPermission).toHaveBeenCalledTimes(1);
 		});
 
-		it('Notification.permission が granted の場合にリクエストが呼ばれないこと', () => {
-			const mockRequestPermission = jest.fn();
+		it('通知許可後、ベルアイコンの斜線が消えること', async () => {
+			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
-				permission: 'granted',
+				permission: 'default',
 				requestPermission: mockRequestPermission,
 			} as any;
 
+			//! permissionをgrantedに変更するモック。
+			mockRequestPermission.mockImplementation(async () => {
+				(global.Notification as any).permission = 'granted';
+				return 'granted';
+			});
+
 			app = new App();
 
-			expect(mockRequestPermission).not.toHaveBeenCalled();
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			//! 初期状態で斜線が表示されている。
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+
+			//! クリックして許可。
+			bellButton.click();
+			await Promise.resolve();
+
+			//! 許可後、斜線が消える。
+			expect(bellIcon?.classList.contains('disabled')).toBe(false);
+			expect(bellSlash?.style.display).toBe('none');
+		});
+
+		it('通知許可を拒否された場合、ベルアイコンは斜線のまま', async () => {
+			const mockRequestPermission = jest.fn().mockResolvedValue('denied');
+			global.Notification = {
+				permission: 'default',
+				requestPermission: mockRequestPermission,
+			} as any;
+
+			//! permissionをdeniedに変更するモック。
+			mockRequestPermission.mockImplementation(async () => {
+				(global.Notification as any).permission = 'denied';
+				return 'denied';
+			});
+
+			app = new App();
+
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			//! クリックして拒否。
+			bellButton.click();
+			await Promise.resolve();
+
+			//! 拒否後も斜線が表示されたまま。
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+			expect(bellSlash?.style.display).not.toBe('none');
 		});
 	});
 
