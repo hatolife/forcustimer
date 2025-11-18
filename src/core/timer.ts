@@ -1,85 +1,85 @@
-//! ポモドーロタイマーのコアロジック。
-//! 25分の作業時間と5分の休憩時間を管理する。
+// ! ポモドーロタイマーのコアロジック。
+// ! 25分の作業時間と5分の休憩時間を管理する。
 
-//! タイマーのモード。
+// ! タイマーのモード。
 export type TimerMode = 'work' | 'break' | 'custom';
 
-//! タイマーの状態。
+// ! タイマーの状態。
 export type TimerStatus = 'idle' | 'running' | 'paused';
 
-//! タイマーの状態を表すインターフェース。
+// ! タイマーの状態を表すインターフェース。
 export interface TimerState {
-	mode: TimerMode;              //! 'work' (25分), 'break' (5分), または 'custom' (カスタム時間)。
-	status: TimerStatus;          //! 'idle', 'running', 'paused'。
-	remainingSeconds: number;     //! 残り秒数。
+	mode: TimerMode; // ! 'work' (25分), 'break' (5分), または 'custom' (カスタム時間)。
+	status: TimerStatus; // ! 'idle', 'running', 'paused'。
+	remainingSeconds: number; // ! 残り秒数。
 }
 
-//! 各モードのデフォルト時間(秒)。
+// ! 各モードのデフォルト時間(秒)。
 const MODE_DURATIONS: Record<TimerMode, number> = {
-	work: 1500,   //! 25分 = 1500秒。
-	break: 300,   //! 5分 = 300秒。
-	custom: 600,  //! カスタムタイマー = 10分 (デフォルト)。
+	work: 1500, // ! 25分 = 1500秒。
+	break: 300, // ! 5分 = 300秒。
+	custom: 600 // ! カスタムタイマー = 10分 (デフォルト)。
 };
 
-//! タイマー完了時のコールバック関数の型。
+// ! タイマー完了時のコールバック関数の型。
 export type TimerCompleteCallback = (mode: TimerMode) => void;
 
-//! ポモドーロタイマークラス。
+// ! ポモドーロタイマークラス。
 export class Timer {
 	private state: TimerState;
 	private intervalId: number | null = null;
 	private onComplete?: TimerCompleteCallback;
-	private startTime: number = 0;           //! タイマー開始時刻(ミリ秒)。
-	private totalDuration: number = 0;       //! タイマーの総時間(秒)。
+	private startTime: number = 0; // ! タイマー開始時刻(ミリ秒)。
+	private totalDuration: number = 0; // ! タイマーの総時間(秒)。
 
-	//! コンストラクタ。
-	//! 初期状態: work mode, idle status, 1500秒(25分)。
+	// ! コンストラクタ。
+	// ! 初期状態: work mode, idle status, 1500秒(25分)。
 	constructor(onComplete?: TimerCompleteCallback) {
 		this.state = {
 			mode: 'work',
 			status: 'idle',
-			remainingSeconds: MODE_DURATIONS.work,
+			remainingSeconds: MODE_DURATIONS.work
 		};
 		this.onComplete = onComplete;
 	}
 
-	//! タイマーを開始する。
-	//! statusをrunningに変更し、開始時刻を記録。
+	// ! タイマーを開始する。
+	// ! statusをrunningに変更し、開始時刻を記録。
 	start(): void {
-		//! 既にrunning状態の場合は何もしない(重複起動を防ぐ)。
+		// ! 既にrunning状態の場合は何もしない(重複起動を防ぐ)。
 		if (this.state.status === 'running') {
 			return;
 		}
 
 		this.state.status = 'running';
 
-		//! 開始時刻と総時間を記録。
+		// ! 開始時刻と総時間を記録。
 		this.startTime = Date.now();
 		this.totalDuration = this.state.remainingSeconds;
 
-		//! 100msごとに時刻ベースで更新(バックグラウンドでも正確)。
+		// ! 100msごとに時刻ベースで更新(バックグラウンドでも正確)。
 		this.intervalId = window.setInterval(() => {
 			this.tick();
 		}, 100);
 	}
 
-	//! 100msごとに呼ばれる内部メソッド。
-	//! 開始時刻からの経過時間を計算して残り時間を更新。
+	// ! 100msごとに呼ばれる内部メソッド。
+	// ! 開始時刻からの経過時間を計算して残り時間を更新。
 	private tick(): void {
-		//! 経過時間を計算(秒単位)。
+		// ! 経過時間を計算(秒単位)。
 		const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
 
-		//! 残り時間を計算。
+		// ! 残り時間を計算。
 		this.state.remainingSeconds = Math.max(0, this.totalDuration - elapsedSeconds);
 
-		//! 残り時間が0になったら停止。
+		// ! 残り時間が0になったら停止。
 		if (this.state.remainingSeconds <= 0) {
 			this.state.remainingSeconds = 0;
 			this.stop();
 		}
 	}
 
-	//! タイマーを停止する内部メソッド。
+	// ! タイマーを停止する内部メソッド。
 	private stop(): void {
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
@@ -87,30 +87,30 @@ export class Timer {
 		}
 		this.state.status = 'idle';
 
-		//! 完了コールバックを呼び出す。
+		// ! 完了コールバックを呼び出す。
 		if (this.onComplete) {
 			this.onComplete(this.state.mode);
 		}
 	}
 
-	//! タイマーを一時停止する。
-	//! statusをpausedに変更し、カウントダウンを停止。
-	//! 現在の残り時間を保持。
+	// ! タイマーを一時停止する。
+	// ! statusをpausedに変更し、カウントダウンを停止。
+	// ! 現在の残り時間を保持。
 	pause(): void {
 		if (this.intervalId !== null) {
-			//! 最新の残り時間を計算してから停止。
+			// ! 最新の残り時間を計算してから停止。
 			this.tick();
 			clearInterval(this.intervalId);
 			this.intervalId = null;
 		}
-		//! idle状態からpauseされた場合はidleのまま。
+		// ! idle状態からpauseされた場合はidleのまま。
 		if (this.state.status !== 'idle') {
 			this.state.status = 'paused';
 		}
 	}
 
-	//! タイマーをリセットする。
-	//! statusをidleに変更し、remainingSecondsをモードのデフォルト値にリセット。
+	// ! タイマーをリセットする。
+	// ! statusをidleに変更し、remainingSecondsをモードのデフォルト値にリセット。
 	reset(): void {
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
@@ -120,16 +120,16 @@ export class Timer {
 		this.state.remainingSeconds = MODE_DURATIONS[this.state.mode];
 	}
 
-	//! 現在の状態を取得する。
-	//! 状態オブジェクトのコピーを返す(外部から直接変更されないように)。
+	// ! 現在の状態を取得する。
+	// ! 状態オブジェクトのコピーを返す(外部から直接変更されないように)。
 	getState(): TimerState {
 		return { ...this.state };
 	}
 
-	//! モードを変更する。
-	//! モード変更時にremainingSecondsを新しいモードのデフォルト値に設定し、statusをidleにリセット。
+	// ! モードを変更する。
+	// ! モード変更時にremainingSecondsを新しいモードのデフォルト値に設定し、statusをidleにリセット。
 	setMode(mode: TimerMode): void {
-		//! 実行中のタイマーを停止。
+		// ! 実行中のタイマーを停止。
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
 			this.intervalId = null;
@@ -140,19 +140,19 @@ export class Timer {
 		this.state.remainingSeconds = MODE_DURATIONS[mode];
 	}
 
-	//! カスタムタイマーの時間を設定する。
-	//! モードをcustomに変更し、指定した分数を設定。
+	// ! カスタムタイマーの時間を設定する。
+	// ! モードをcustomに変更し、指定した分数を設定。
 	setCustomMinutes(minutes: number): void {
-		//! 実行中のタイマーを停止。
+		// ! 実行中のタイマーを停止。
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
 			this.intervalId = null;
 		}
 
-		//! 分数を秒数に変換。
+		// ! 分数を秒数に変換。
 		const seconds = minutes * 60;
 
-		//! カスタムモードのデフォルト時間を更新。
+		// ! カスタムモードのデフォルト時間を更新。
 		MODE_DURATIONS.custom = seconds;
 
 		this.state.mode = 'custom';

@@ -1,8 +1,8 @@
-//! UIとTimerクラスを統合するメインアプリケーション。
+// ! UIとTimerクラスを統合するメインアプリケーション。
 
-import { Timer, TimerState, TimerMode } from '../core/timer';
+import { Timer, TimerMode, TimerState } from '../core/timer';
 
-//! アプリケーションクラス。
+// ! アプリケーションクラス。
 class App {
 	private timer: Timer;
 	private timeDisplay: HTMLElement;
@@ -15,10 +15,10 @@ class App {
 	private updateIntervalId: number | null = null;
 
 	constructor() {
-		//! Timerインスタンスを作成(完了コールバック付き)。
+		// ! Timerインスタンスを作成(完了コールバック付き)。
 		this.timer = new Timer((mode) => this.onTimerComplete(mode));
 
-		//! DOM要素を取得。
+		// ! DOM要素を取得。
 		this.timeDisplay = this.getElement('time');
 		this.modeDisplay = this.getElement('mode');
 		this.startBtn = this.getElement('start-btn') as HTMLButtonElement;
@@ -27,17 +27,17 @@ class App {
 		this.workModeBtn = this.getElement('work-mode-btn') as HTMLButtonElement;
 		this.breakModeBtn = this.getElement('break-mode-btn') as HTMLButtonElement;
 
-		//! イベントリスナーを設定。
+		// ! イベントリスナーを設定。
 		this.setupEventListeners();
 
-		//! 初期表示を更新。
+		// ! 初期表示を更新。
 		this.updateDisplay();
 
-		//! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
+		// ! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
 		this.setupNotificationBellIcon();
 	}
 
-	//! DOM要素を安全に取得するヘルパーメソッド。
+	// ! DOM要素を安全に取得するヘルパーメソッド。
 	private getElement(id: string): HTMLElement {
 		const element = document.getElementById(id);
 		if (!element) {
@@ -46,62 +46,62 @@ class App {
 		return element;
 	}
 
-	//! イベントリスナーを設定。
+	// ! イベントリスナーを設定。
 	private setupEventListeners(): void {
-		//! Startボタン。
+		// ! Startボタン。
 		this.startBtn.addEventListener('click', () => {
 			this.clearCompletionEffects();
 			this.timer.start();
 			this.updateDisplay();
 		});
 
-		//! Pauseボタン。
+		// ! Pauseボタン。
 		this.pauseBtn.addEventListener('click', () => {
 			this.timer.pause();
 			this.updateDisplay();
 		});
 
-		//! Resetボタン。
+		// ! Resetボタン。
 		this.resetBtn.addEventListener('click', () => {
 			this.timer.reset();
 			this.updateDisplay();
 		});
 
-		//! Workモードボタン。
+		// ! Workモードボタン。
 		this.workModeBtn.addEventListener('click', () => {
 			this.timer.setMode('work');
 			this.updateDisplay();
 			this.updateModeButtons();
 		});
 
-		//! Breakモードボタン。
+		// ! Breakモードボタン。
 		this.breakModeBtn.addEventListener('click', () => {
 			this.timer.setMode('break');
 			this.updateDisplay();
 			this.updateModeButtons();
 		});
 
-		//! カスタムタイマーボタン。
+		// ! カスタムタイマーボタン。
 		this.setupCustomTimer();
 
-		//! 1秒ごとに表示を更新。
+		// ! 1秒ごとに表示を更新。
 		this.startUpdateLoop();
 	}
 
-	//! 表示更新ループを開始。
+	// ! 表示更新ループを開始。
 	private startUpdateLoop(): void {
-		//! 既に実行中の場合は停止。
+		// ! 既に実行中の場合は停止。
 		if (this.updateIntervalId !== null) {
 			clearInterval(this.updateIntervalId);
 		}
 
-		//! 100msごとにチェックして滑らかに更新。
+		// ! 100msごとにチェックして滑らかに更新。
 		this.updateIntervalId = window.setInterval(() => {
 			this.updateDisplay();
 		}, 100);
 	}
 
-	//! 表示更新ループを停止。
+	// ! 表示更新ループを停止。
 	destroy(): void {
 		if (this.updateIntervalId !== null) {
 			clearInterval(this.updateIntervalId);
@@ -109,31 +109,32 @@ class App {
 		}
 	}
 
-	//! 表示を更新。
+	// ! 表示を更新。
 	private updateDisplay(): void {
 		const state = this.timer.getState();
 
-		//! 時間表示を更新。
+		// ! 時間表示を更新。
 		this.timeDisplay.textContent = this.formatTime(state.remainingSeconds);
 
-		//! モード表示を更新。
-		this.modeDisplay.textContent =
-			state.mode === 'work' ? 'Work' :
-			state.mode === 'break' ? 'Break' :
-			'Custom';
+		// ! モード表示を更新。
+		this.modeDisplay.textContent = state.mode === 'work'
+			? 'Work'
+			: state.mode === 'break'
+			? 'Break'
+			: 'Custom';
 
-		//! ボタンの状態を更新。
+		// ! ボタンの状態を更新。
 		this.updateButtons(state);
 	}
 
-	//! 秒数をMM:SS形式にフォーマット。
+	// ! 秒数をMM:SS形式にフォーマット。
 	private formatTime(seconds: number): string {
 		const minutes = Math.floor(seconds / 60);
 		const secs = seconds % 60;
 		return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 	}
 
-	//! ボタンの有効/無効状態を更新。
+	// ! ボタンの有効/無効状態を更新。
 	private updateButtons(state: TimerState): void {
 		switch (state.status) {
 			case 'idle':
@@ -154,7 +155,7 @@ class App {
 		}
 	}
 
-	//! モードボタンのアクティブ状態を更新。
+	// ! モードボタンのアクティブ状態を更新。
 	private updateModeButtons(): void {
 		const state = this.timer.getState();
 		if (state.mode === 'work') {
@@ -166,21 +167,21 @@ class App {
 		}
 	}
 
-	//! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
+	// ! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
 	private setupNotificationBellIcon(): void {
 		const bellButton = document.getElementById('notification-bell');
 		if (!bellButton) {
 			return;
 		}
 
-		//! 初期表示を更新。
+		// ! 初期表示を更新。
 		this.updateNotificationBellIcon();
 
-		//! クリックイベントを設定。
+		// ! クリックイベントを設定。
 		bellButton.addEventListener('click', () => this.handleNotificationBellClick());
 	}
 
-	//! ベルアイコンの表示を更新。
+	// ! ベルアイコンの表示を更新。
 	private updateNotificationBellIcon(): void {
 		if (!('Notification' in window)) {
 			return;
@@ -193,7 +194,7 @@ class App {
 			return;
 		}
 
-		//! 通知許可状態に応じて表示を切り替え。
+		// ! 通知許可状態に応じて表示を切り替え。
 		if (Notification.permission === 'granted') {
 			bellIcon.classList.remove('disabled');
 			bellSlash.style.display = 'none';
@@ -203,60 +204,61 @@ class App {
 		}
 	}
 
-	//! ベルアイコンクリック時のハンドラー。
+	// ! ベルアイコンクリック時のハンドラー。
 	private async handleNotificationBellClick(): Promise<void> {
 		if (!('Notification' in window)) {
 			return;
 		}
 
-		//! 既に許可済みの場合は何もしない。
+		// ! 既に許可済みの場合は何もしない。
 		if (Notification.permission === 'granted') {
 			return;
 		}
 
 		try {
-			//! 通知許可をリクエスト。
+			// ! 通知許可をリクエスト。
 			await Notification.requestPermission();
 
-			//! 許可状態が変わったらアイコンを更新。
+			// ! 許可状態が変わったらアイコンを更新。
 			this.updateNotificationBellIcon();
 		} catch (error) {
 			console.error('Failed to request notification permission:', error);
 		}
 	}
 
-	//! タイマー完了時のコールバック。
+	// ! タイマー完了時のコールバック。
 	private onTimerComplete(mode: TimerMode): void {
-		//! 表示を即座に更新 (00:00を表示)。
+		// ! 表示を即座に更新 (00:00を表示)。
 		this.updateDisplay();
-		//! 完了時のUI効果を適用。
+		// ! 完了時のUI効果を適用。
 		this.showCompletionEffects(mode);
-		//! 通知を表示。
+		// ! 通知を表示。
 		this.showNotification(mode);
 	}
 
-	//! 完了時のUI効果を表示。
+	// ! 完了時のUI効果を表示。
 	private showCompletionEffects(mode: TimerMode): void {
 		const container = document.querySelector('.container');
 		const timerDisplay = document.querySelector('.timer-display');
 		const timeDisplay = document.querySelector('.time');
 		const completeMessage = this.getElement('complete-message');
 
-		//! 完了クラスを追加。
+		// ! 完了クラスを追加。
 		container?.classList.add('completed');
 		timerDisplay?.classList.add('completed');
 		timeDisplay?.classList.add('completed');
 
-		//! 完了メッセージを設定して表示。
-		const message =
-			mode === 'work' ? '作業時間終了！お疲れ様でした！' :
-			mode === 'break' ? '休憩時間終了！' :
-			'カスタムタイマー終了！';
+		// ! 完了メッセージを設定して表示。
+		const message = mode === 'work'
+			? '作業時間終了！お疲れ様でした！'
+			: mode === 'break'
+			? '休憩時間終了！'
+			: 'カスタムタイマー終了！';
 		completeMessage.textContent = message;
 		completeMessage.classList.add('show');
 	}
 
-	//! 完了効果をクリア。
+	// ! 完了効果をクリア。
 	private clearCompletionEffects(): void {
 		const container = document.querySelector('.container');
 		const timerDisplay = document.querySelector('.timer-display');
@@ -269,39 +271,41 @@ class App {
 		completeMessage.classList.remove('show');
 	}
 
-	//! 通知を表示（Service Worker経由・iOS PWA対応）。
+	// ! 通知を表示（Service Worker経由・iOS PWA対応）。
 	private showNotification(mode: TimerMode): void {
 		if (!('Notification' in window) || Notification.permission !== 'granted') {
 			return;
 		}
 
-		//! Service Workerが利用できない場合は何もしない。
+		// ! Service Workerが利用できない場合は何もしない。
 		if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
 			return;
 		}
 
-		const title =
-			mode === 'work' ? '作業時間終了!' :
-			mode === 'break' ? '休憩時間終了!' :
-			'カスタムタイマー終了!';
-		const body =
-			mode === 'work' ? '25分の作業お疲れ様でした!' :
-			mode === 'break' ? '5分の休憩終了です!' :
-			'カスタムタイマーが終了しました!';
+		const title = mode === 'work'
+			? '作業時間終了!'
+			: mode === 'break'
+			? '休憩時間終了!'
+			: 'カスタムタイマー終了!';
+		const body = mode === 'work'
+			? '25分の作業お疲れ様でした!'
+			: mode === 'break'
+			? '5分の休憩終了です!'
+			: 'カスタムタイマーが終了しました!';
 
-		//! Service Workerへメッセージを送信。
+		// ! Service Workerへメッセージを送信。
 		navigator.serviceWorker.controller.postMessage({
 			type: 'SHOW_NOTIFICATION',
 			payload: {
 				title: title,
 				body: body,
 				icon: '/icons/icon-192x192.png',
-				badge: '/icons/icon-96x96.png',
-			},
+				badge: '/icons/icon-96x96.png'
+			}
 		});
 	}
 
-	//! カスタムタイマーのセットアップ。
+	// ! カスタムタイマーのセットアップ。
 	private setupCustomTimer(): void {
 		const customTimerBtn = document.getElementById('custom-timer-btn');
 		const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
@@ -310,22 +314,22 @@ class App {
 			customTimerBtn.addEventListener('click', () => {
 				const minutes = parseInt(customMinutesInput.value, 10);
 
-				//! 入力値の検証。
+				// ! 入力値の検証。
 				if (isNaN(minutes) || minutes < 1 || minutes > 999) {
 					alert('1〜999分の範囲で入力してください。');
 					return;
 				}
 
-				//! カスタムタイマーを設定。
+				// ! カスタムタイマーを設定。
 				this.timer.setCustomMinutes(minutes);
 				this.updateDisplay();
 				this.updateModeButtons();
 
-				//! 入力欄をクリア。
+				// ! 入力欄をクリア。
 				customMinutesInput.value = '';
 			});
 
-			//! Enterキーでも設定できるようにする。
+			// ! Enterキーでも設定できるようにする。
 			customMinutesInput.addEventListener('keypress', (e) => {
 				if (e.key === 'Enter') {
 					customTimerBtn.click();
@@ -335,7 +339,7 @@ class App {
 	}
 }
 
-//! Service Workerを登録。
+// ! Service Workerを登録。
 function registerServiceWorker(): void {
 	if ('serviceWorker' in navigator) {
 		window.addEventListener('load', () => {
@@ -351,7 +355,7 @@ function registerServiceWorker(): void {
 	}
 }
 
-//! DOMが読み込まれたらアプリケーションを起動。
+// ! DOMが読み込まれたらアプリケーションを起動。
 if (typeof document !== 'undefined') {
 	document.addEventListener('DOMContentLoaded', () => {
 		new App();
@@ -359,5 +363,5 @@ if (typeof document !== 'undefined') {
 	});
 }
 
-//! テスト用にエクスポート。
+// ! テスト用にエクスポート。
 export { App };

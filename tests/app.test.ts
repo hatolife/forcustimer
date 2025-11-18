@@ -1,5 +1,5 @@
-//! Appクラスの統合テスト。
-//! UIとTimerクラスの統合動作を確認する。
+// ! Appクラスの統合テスト。
+// ! UIとTimerクラスの統合動作を確認する。
 
 import { App } from '../src/ui/app';
 
@@ -7,7 +7,7 @@ describe('App - UI Integration', () => {
 	let app: App | null = null;
 
 	beforeEach(() => {
-		//! DOMをセットアップ。
+		// ! DOMをセットアップ。
 		document.body.innerHTML = `
 			<div class="container">
 				<h1>Focus Timer</h1>
@@ -47,12 +47,12 @@ describe('App - UI Integration', () => {
 			</div>
 		`;
 
-		//! タイマーをモック化。
+		// ! タイマーをモック化。
 		jest.useFakeTimers();
 	});
 
 	afterEach(() => {
-		//! Appインスタンスをクリーンアップ。
+		// ! Appインスタンスをクリーンアップ。
 		if (app) {
 			app.destroy();
 			app = null;
@@ -91,16 +91,16 @@ describe('App - UI Integration', () => {
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
 
-			//! 初期状態を確認。
+			// ! 初期状態を確認。
 			expect(timeDisplay?.textContent).toBe('25:00');
 
-			//! Startボタンをクリック。
+			// ! Startボタンをクリック。
 			startBtn.click();
 
-			//! タイマーの1秒カウントダウン + 表示更新の100ms間隔の両方を進める。
+			// ! タイマーの1秒カウントダウン + 表示更新の100ms間隔の両方を進める。
 			jest.advanceTimersByTime(1100);
 
-			//! 時間が減っていることを確認。
+			// ! 時間が減っていることを確認。
 			expect(timeDisplay?.textContent).toBe('24:59');
 		});
 
@@ -110,10 +110,10 @@ describe('App - UI Integration', () => {
 			const pauseBtn = document.getElementById('pause-btn') as HTMLButtonElement;
 			const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
 
-			//! Startボタンをクリック。
+			// ! Startボタンをクリック。
 			startBtn.click();
 
-			//! ボタンの状態を確認。
+			// ! ボタンの状態を確認。
 			expect(startBtn.disabled).toBe(true);
 			expect(pauseBtn.disabled).toBe(false);
 			expect(resetBtn.disabled).toBe(false);
@@ -127,16 +127,16 @@ describe('App - UI Integration', () => {
 			const pauseBtn = document.getElementById('pause-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
 
-			//! タイマー開始。
+			// ! タイマー開始。
 			startBtn.click();
-			jest.advanceTimersByTime(3100); //! 3秒 + 表示更新の100ms。
+			jest.advanceTimersByTime(3100); // ! 3秒 + 表示更新の100ms。
 
 			const timeBeforePause = timeDisplay?.textContent;
 
-			//! 一時停止。
+			// ! 一時停止。
 			pauseBtn.click();
 
-			//! さらに時間を進めても変化しないことを確認。
+			// ! さらに時間を進めても変化しないことを確認。
 			jest.advanceTimersByTime(5000);
 
 			expect(timeDisplay?.textContent).toBe(timeBeforePause);
@@ -150,14 +150,14 @@ describe('App - UI Integration', () => {
 			const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
 
-			//! タイマー開始。
+			// ! タイマー開始。
 			startBtn.click();
 			jest.advanceTimersByTime(10000);
 
-			//! リセット。
+			// ! リセット。
 			resetBtn.click();
 
-			//! 初期値に戻ることを確認。
+			// ! 初期値に戻ることを確認。
 			expect(timeDisplay?.textContent).toBe('25:00');
 		});
 	});
@@ -169,10 +169,10 @@ describe('App - UI Integration', () => {
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			//! Breakモードに切替。
+			// ! Breakモードに切替。
 			breakBtn.click();
 
-			//! 表示を確認。
+			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:00');
 			expect(modeDisplay?.textContent).toBe('Break');
 		});
@@ -184,14 +184,14 @@ describe('App - UI Integration', () => {
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			//! Breakモードに切替。
+			// ! Breakモードに切替。
 			breakBtn.click();
 			expect(timeDisplay?.textContent).toBe('05:00');
 
-			//! Workモードに戻す。
+			// ! Workモードに戻す。
 			workBtn.click();
 
-			//! 表示を確認。
+			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('25:00');
 			expect(modeDisplay?.textContent).toBe('Work');
 		});
@@ -201,11 +201,11 @@ describe('App - UI Integration', () => {
 			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
 			const workBtn = document.getElementById('work-mode-btn') as HTMLButtonElement;
 
-			//! 初期状態でWorkがアクティブ。
+			// ! 初期状態でWorkがアクティブ。
 			expect(workBtn.classList.contains('active')).toBe(true);
 			expect(breakBtn.classList.contains('active')).toBe(false);
 
-			//! Breakモードに切替。
+			// ! Breakモードに切替。
 			breakBtn.click();
 
 			expect(workBtn.classList.contains('active')).toBe(false);
@@ -219,19 +219,19 @@ describe('App - UI Integration', () => {
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
 
-			//! タイマー開始。
+			// ! タイマー開始。
 			startBtn.click();
 
-			//! 100ms経過（表示更新のチェック間隔）。
+			// ! 100ms経過（表示更新のチェック間隔）。
 			jest.advanceTimersByTime(100);
 
-			//! この時点ではまだ1秒経っていないので時間は変わらない。
+			// ! この時点ではまだ1秒経っていないので時間は変わらない。
 			expect(timeDisplay?.textContent).toBe('25:00');
 
-			//! さらに1000ms経過（合計1100ms）。
+			// ! さらに1000ms経過（合計1100ms）。
 			jest.advanceTimersByTime(1000);
 
-			//! 1秒経過したので時間が減る。
+			// ! 1秒経過したので時間が減る。
 			expect(timeDisplay?.textContent).toBe('24:59');
 		});
 	});
@@ -240,27 +240,27 @@ describe('App - UI Integration', () => {
 		let mockPostMessage: jest.Mock;
 
 		beforeEach(() => {
-			//! Notification APIのモック。
+			// ! Notification APIのモック。
 			global.Notification = {
 				permission: 'granted',
-				requestPermission: jest.fn().mockResolvedValue('granted'),
+				requestPermission: jest.fn().mockResolvedValue('granted')
 			} as any;
 
-			//! Service Workerのモック。
+			// ! Service Workerのモック。
 			mockPostMessage = jest.fn();
 			Object.defineProperty(navigator, 'serviceWorker', {
 				value: {
 					controller: {
-						postMessage: mockPostMessage,
+						postMessage: mockPostMessage
 					},
 					ready: Promise.resolve({
 						active: {
-							postMessage: mockPostMessage,
-						},
-					}),
+							postMessage: mockPostMessage
+						}
+					})
 				},
 				writable: true,
-				configurable: true,
+				configurable: true
 			});
 		});
 
@@ -270,18 +270,18 @@ describe('App - UI Integration', () => {
 
 			startBtn.click();
 
-			//! 25分経過してタイマー完了。
+			// ! 25分経過してタイマー完了。
 			jest.advanceTimersByTime(1500100);
 
-			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
 			expect(mockPostMessage).toHaveBeenCalledWith({
 				type: 'SHOW_NOTIFICATION',
 				payload: {
 					title: '作業時間終了!',
 					body: '25分の作業お疲れ様でした!',
 					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png',
-				},
+					badge: '/icons/icon-96x96.png'
+				}
 			});
 		});
 
@@ -293,18 +293,18 @@ describe('App - UI Integration', () => {
 			breakBtn.click();
 			startBtn.click();
 
-			//! 5分経過してタイマー完了。
+			// ! 5分経過してタイマー完了。
 			jest.advanceTimersByTime(300100);
 
-			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
 			expect(mockPostMessage).toHaveBeenCalledWith({
 				type: 'SHOW_NOTIFICATION',
 				payload: {
 					title: '休憩時間終了!',
 					body: '5分の休憩終了です!',
 					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png',
-				},
+					badge: '/icons/icon-96x96.png'
+				}
 			});
 		});
 
@@ -314,30 +314,30 @@ describe('App - UI Integration', () => {
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 
-			//! 1分(60秒)のカスタムタイマーを設定。
+			// ! 1分(60秒)のカスタムタイマーを設定。
 			customMinutesInput.value = '1';
 			customTimerBtn.click();
 			startBtn.click();
 
-			//! 60秒経過してタイマー完了。
+			// ! 60秒経過してタイマー完了。
 			jest.advanceTimersByTime(60100);
 
-			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
 			expect(mockPostMessage).toHaveBeenCalledWith({
 				type: 'SHOW_NOTIFICATION',
 				payload: {
 					title: 'カスタムタイマー終了!',
 					body: 'カスタムタイマーが終了しました!',
 					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png',
-				},
+					badge: '/icons/icon-96x96.png'
+				}
 			});
 		});
 
 		it('通知許可がない場合はService Workerへメッセージがpostされないこと', () => {
 			global.Notification = {
 				permission: 'denied',
-				requestPermission: jest.fn(),
+				requestPermission: jest.fn()
 			} as any;
 
 			app = new App();
@@ -346,16 +346,16 @@ describe('App - UI Integration', () => {
 			startBtn.click();
 			jest.advanceTimersByTime(1500100);
 
-			//! Service WorkerへのpostMessageが呼ばれないことを確認。
+			// ! Service WorkerへのpostMessageが呼ばれないことを確認。
 			expect(mockPostMessage).not.toHaveBeenCalled();
 		});
 
 		it('Service Workerが利用できない場合は何もしないこと', () => {
-			//! Service Workerを削除。
+			// ! Service Workerを削除。
 			Object.defineProperty(navigator, 'serviceWorker', {
 				value: undefined,
 				writable: true,
-				configurable: true,
+				configurable: true
 			});
 
 			app = new App();
@@ -364,7 +364,7 @@ describe('App - UI Integration', () => {
 			startBtn.click();
 			jest.advanceTimersByTime(1500100);
 
-			//! エラーが投げられないことを確認（正常終了）。
+			// ! エラーが投げられないことを確認（正常終了）。
 			expect(true).toBe(true);
 		});
 	});
@@ -377,11 +377,11 @@ describe('App - UI Integration', () => {
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			//! 10分を入力してSetボタンをクリック。
+			// ! 10分を入力してSetボタンをクリック。
 			customMinutesInput.value = '10';
 			customTimerBtn.click();
 
-			//! 表示を確認。
+			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('10:00');
 			expect(modeDisplay?.textContent).toBe('Custom');
 		});
@@ -391,19 +391,19 @@ describe('App - UI Integration', () => {
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 
-			//! 5分を入力してEnterキーを押す。
+			// ! 5分を入力してEnterキーを押す。
 			customMinutesInput.value = '5';
 			const enterEvent = new KeyboardEvent('keypress', { key: 'Enter' });
 			customMinutesInput.dispatchEvent(enterEvent);
 
-			//! 表示を確認。
+			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:00');
 		});
 	});
 
 	describe('通知許可ベルアイコン（iOS PWA対応）', () => {
 		beforeEach(() => {
-			//! ベルアイコンボタンのHTMLを追加。
+			// ! ベルアイコンボタンのHTMLを追加。
 			const bellButton = `
 				<button id="notification-bell" class="notification-bell" aria-label="通知設定">
 					<svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -419,7 +419,7 @@ describe('App - UI Integration', () => {
 		it('通知許可がない場合、ベルアイコンに斜線が表示されること', () => {
 			global.Notification = {
 				permission: 'default',
-				requestPermission: jest.fn().mockResolvedValue('granted'),
+				requestPermission: jest.fn().mockResolvedValue('granted')
 			} as any;
 
 			app = new App();
@@ -434,7 +434,7 @@ describe('App - UI Integration', () => {
 		it('通知許可がある場合、ベルアイコンに斜線が表示されないこと', () => {
 			global.Notification = {
 				permission: 'granted',
-				requestPermission: jest.fn(),
+				requestPermission: jest.fn()
 			} as any;
 
 			app = new App();
@@ -450,7 +450,7 @@ describe('App - UI Integration', () => {
 			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
 				permission: 'default',
-				requestPermission: mockRequestPermission,
+				requestPermission: mockRequestPermission
 			} as any;
 
 			app = new App();
@@ -458,7 +458,7 @@ describe('App - UI Integration', () => {
 			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
 			bellButton.click();
 
-			//! Promiseの解決を待つ。
+			// ! Promiseの解決を待つ。
 			await Promise.resolve();
 
 			expect(mockRequestPermission).toHaveBeenCalledTimes(1);
@@ -468,10 +468,10 @@ describe('App - UI Integration', () => {
 			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
 				permission: 'default',
-				requestPermission: mockRequestPermission,
+				requestPermission: mockRequestPermission
 			} as any;
 
-			//! permissionをgrantedに変更するモック。
+			// ! permissionをgrantedに変更するモック。
 			mockRequestPermission.mockImplementation(async () => {
 				(global.Notification as any).permission = 'granted';
 				return 'granted';
@@ -483,14 +483,14 @@ describe('App - UI Integration', () => {
 			const bellIcon = document.querySelector('.bell-icon');
 			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
 
-			//! 初期状態で斜線が表示されている。
+			// ! 初期状態で斜線が表示されている。
 			expect(bellIcon?.classList.contains('disabled')).toBe(true);
 
-			//! クリックして許可。
+			// ! クリックして許可。
 			bellButton.click();
 			await Promise.resolve();
 
-			//! 許可後、斜線が消える。
+			// ! 許可後、斜線が消える。
 			expect(bellIcon?.classList.contains('disabled')).toBe(false);
 			expect(bellSlash?.style.display).toBe('none');
 		});
@@ -499,10 +499,10 @@ describe('App - UI Integration', () => {
 			const mockRequestPermission = jest.fn().mockResolvedValue('denied');
 			global.Notification = {
 				permission: 'default',
-				requestPermission: mockRequestPermission,
+				requestPermission: mockRequestPermission
 			} as any;
 
-			//! permissionをdeniedに変更するモック。
+			// ! permissionをdeniedに変更するモック。
 			mockRequestPermission.mockImplementation(async () => {
 				(global.Notification as any).permission = 'denied';
 				return 'denied';
@@ -514,11 +514,11 @@ describe('App - UI Integration', () => {
 			const bellIcon = document.querySelector('.bell-icon');
 			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
 
-			//! クリックして拒否。
+			// ! クリックして拒否。
 			bellButton.click();
 			await Promise.resolve();
 
-			//! 拒否後も斜線が表示されたまま。
+			// ! 拒否後も斜線が表示されたまま。
 			expect(bellIcon?.classList.contains('disabled')).toBe(true);
 			expect(bellSlash?.style.display).not.toBe('none');
 		});
@@ -526,11 +526,11 @@ describe('App - UI Integration', () => {
 
 	describe('エラーハンドリング', () => {
 		it('存在しないDOM要素を取得しようとするとエラーが投げられること', () => {
-			//! start-btnを削除。
+			// ! start-btnを削除。
 			const startBtn = document.getElementById('start-btn');
 			startBtn?.remove();
 
-			//! Appインスタンス作成時にエラーが投げられることを確認。
+			// ! Appインスタンス作成時にエラーが投げられることを確認。
 			expect(() => {
 				new App();
 			}).toThrow('Element with id "start-btn" not found');

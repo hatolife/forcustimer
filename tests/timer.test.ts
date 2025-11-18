@@ -1,5 +1,5 @@
-//! Timerクラスのテスト。
-//! TDD (Test-Driven Development) アプローチで作成。
+// ! Timerクラスのテスト。
+// ! TDD (Test-Driven Development) アプローチで作成。
 
 import { Timer } from '../src/core/timer';
 
@@ -7,14 +7,14 @@ describe('Timer', () => {
 	let timer: Timer;
 
 	beforeEach(() => {
-		//! 各テスト前に新しいTimerインスタンスを作成。
+		// ! 各テスト前に新しいTimerインスタンスを作成。
 		timer = new Timer();
-		//! タイマーを停止してクリーンアップ。
+		// ! タイマーを停止してクリーンアップ。
 		jest.clearAllTimers();
 	});
 
 	afterEach(() => {
-		//! テスト後のクリーンアップ。
+		// ! テスト後のクリーンアップ。
 		timer.reset();
 	});
 
@@ -29,12 +29,12 @@ describe('Timer', () => {
 
 	describe('start()', () => {
 		beforeEach(() => {
-			//! タイマーをモック化。
+			// ! タイマーをモック化。
 			jest.useFakeTimers();
 		});
 
 		afterEach(() => {
-			//! 実際のタイマーに戻す。
+			// ! 実際のタイマーに戻す。
 			jest.useRealTimers();
 		});
 
@@ -47,27 +47,27 @@ describe('Timer', () => {
 		it('startを呼ぶと1秒ごとにremainingSecondsが減ること', () => {
 			timer.start();
 
-			//! 初期状態: 1500秒。
+			// ! 初期状態: 1500秒。
 			expect(timer.getState().remainingSeconds).toBe(1500);
 
-			//! 1秒経過。
+			// ! 1秒経過。
 			jest.advanceTimersByTime(1000);
 			expect(timer.getState().remainingSeconds).toBe(1499);
 
-			//! さらに5秒経過。
+			// ! さらに5秒経過。
 			jest.advanceTimersByTime(5000);
 			expect(timer.getState().remainingSeconds).toBe(1494);
 		});
 
 		it('remainingSecondsが0になったら自動的にidleになること', () => {
-			//! 残り時間を1秒に設定してテスト。
+			// ! 残り時間を1秒に設定してテスト。
 			timer.setMode('work');
 			timer.reset();
 
-			//! startして時間を進める。
+			// ! startして時間を進める。
 			timer.start();
 
-			//! 1500秒進めて0にする。
+			// ! 1500秒進めて0にする。
 			jest.advanceTimersByTime(1500 * 1000);
 
 			const finalState = timer.getState();
@@ -95,14 +95,14 @@ describe('Timer', () => {
 		it('pauseを呼ぶとカウントダウンが停止すること', () => {
 			timer.start();
 
-			//! 3秒経過。
+			// ! 3秒経過。
 			jest.advanceTimersByTime(3000);
 			expect(timer.getState().remainingSeconds).toBe(1497);
 
-			//! 一時停止。
+			// ! 一時停止。
 			timer.pause();
 
-			//! さらに5秒経過しても変化しない。
+			// ! さらに5秒経過しても変化しない。
 			jest.advanceTimersByTime(5000);
 			expect(timer.getState().remainingSeconds).toBe(1497);
 			expect(timer.getState().status).toBe('paused');
@@ -115,7 +115,7 @@ describe('Timer', () => {
 
 			const pausedSeconds = timer.getState().remainingSeconds;
 
-			//! 再開。
+			// ! 再開。
 			timer.start();
 			jest.advanceTimersByTime(2000);
 
@@ -146,7 +146,7 @@ describe('Timer', () => {
 
 			timer.reset();
 			const state = timer.getState();
-			expect(state.remainingSeconds).toBe(1500); //! work mode: 25分。
+			expect(state.remainingSeconds).toBe(1500); // ! work mode: 25分。
 		});
 	});
 
@@ -155,14 +155,14 @@ describe('Timer', () => {
 			timer.setMode('work');
 			const state = timer.getState();
 			expect(state.mode).toBe('work');
-			expect(state.remainingSeconds).toBe(1500); //! 25分。
+			expect(state.remainingSeconds).toBe(1500); // ! 25分。
 		});
 
 		it('setModeでbreakモードに変更できること', () => {
 			timer.setMode('break');
 			const state = timer.getState();
 			expect(state.mode).toBe('break');
-			expect(state.remainingSeconds).toBe(300); //! 5分。
+			expect(state.remainingSeconds).toBe(300); // ! 5分。
 		});
 
 		it('モード変更時にstatusがidleにリセットされること', () => {
@@ -202,7 +202,7 @@ describe('Timer', () => {
 			timer.start();
 
 			jest.advanceTimersByTime(1000);
-			//! 1秒しか減らない(3秒減らない)。
+			// ! 1秒しか減らない(3秒減らない)。
 			expect(timer.getState().remainingSeconds).toBe(1499);
 		});
 	});
@@ -220,17 +220,17 @@ describe('Timer', () => {
 			const onComplete = jest.fn();
 			timer = new Timer(onComplete);
 
-			//! 残り2秒の状態を作る。
+			// ! 残り2秒の状態を作る。
 			timer.start();
 			jest.advanceTimersByTime(1498000);
 
-			//! まだ完了していない。
+			// ! まだ完了していない。
 			expect(onComplete).not.toHaveBeenCalled();
 
-			//! 残り2秒→1秒→0秒。
+			// ! 残り2秒→1秒→0秒。
 			jest.advanceTimersByTime(2000);
 
-			//! 完了時にコールバックが呼ばれる。
+			// ! 完了時にコールバックが呼ばれる。
 			expect(onComplete).toHaveBeenCalledTimes(1);
 			expect(onComplete).toHaveBeenCalledWith('work');
 		});
@@ -242,7 +242,7 @@ describe('Timer', () => {
 			timer.setMode('break');
 			timer.start();
 
-			//! 5分 = 300秒完了。
+			// ! 5分 = 300秒完了。
 			jest.advanceTimersByTime(300000);
 
 			expect(onComplete).toHaveBeenCalledTimes(1);
@@ -253,7 +253,7 @@ describe('Timer', () => {
 			timer = new Timer();
 			timer.start();
 
-			//! 25分完了してもエラーにならない。
+			// ! 25分完了してもエラーにならない。
 			expect(() => {
 				jest.advanceTimersByTime(1500000);
 			}).not.toThrow();
@@ -267,7 +267,7 @@ describe('Timer', () => {
 			jest.advanceTimersByTime(1000);
 			timer.pause();
 
-			//! いくら時間が経過してもコールバックは呼ばれない。
+			// ! いくら時間が経過してもコールバックは呼ばれない。
 			jest.advanceTimersByTime(10000000);
 			expect(onComplete).not.toHaveBeenCalled();
 		});
