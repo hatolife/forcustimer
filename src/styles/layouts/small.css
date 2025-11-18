@@ -1,0 +1,35 @@
+/* 小画面レイアウト (max-width: 600px) */
+@media (max-width: 600px) {
+	.container {
+		padding: var(--spacing-xl) var(--spacing-lg);
+	}
+
+	h1 {
+		font-size: var(--font-size-2xl);
+	}
+
+	.time {
+		font-size: 4rem;
+	}
+
+	.controls {
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.btn {
+		max-width: 100%;
+	}
+
+	.mode-switch {
+		flex-direction: column;
+	}
+
+	.mode-btn {
+		max-width: 100%;
+	}
+
+	.custom-timer-input {
+		width: 100%;
+	}
+}

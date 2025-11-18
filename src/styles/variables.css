@@ -1,0 +1,51 @@
+/* CSS変数定義 */
+:root {
+	/* ブレークポイント */
+	--breakpoint-small: 600px;
+	--breakpoint-ultra-small: 300px;
+
+	/* カラーパレット */
+	--color-primary: #667eea;
+	--color-primary-dark: #5568d3;
+	--color-secondary: #f093fb;
+	--color-tertiary: #4facfe;
+	--color-success: #4caf50;
+	--color-debug: #ff9800;
+	--color-debug-dark: #f57c00;
+	--color-text: #333;
+	--color-text-light: #888;
+	--color-white: #ffffff;
+	--color-hover: #f0f0ff;
+
+	/* ボーダー半径 */
+	--border-radius: 10px;
+	--border-radius-large: 20px;
+
+	/* スペーシング */
+	--spacing-xs: 5px;
+	--spacing-sm: 10px;
+	--spacing-md: 15px;
+	--spacing-lg: 20px;
+	--spacing-xl: 30px;
+	--spacing-xxl: 40px;
+
+	/* フォントサイズ */
+	--font-size-base: 1rem;
+	--font-size-sm: 0.9rem;
+	--font-size-lg: 1.1rem;
+	--font-size-xl: 1.2rem;
+	--font-size-2xl: 2rem;
+	--font-size-3xl: 2.5rem;
+	--font-size-5xl: 5rem;
+
+	/* ボタンサイズ */
+	--btn-padding: 15px 30px;
+	--btn-font-size: var(--font-size-lg);
+	--btn-max-width: 150px;
+	--mode-btn-padding: 12px 24px;
+	--mode-btn-font-size: var(--font-size-base);
+	--mode-btn-max-width: 200px;
+
+	/* タッチターゲットサイズ */
+	--min-touch-target: 44px;
+}

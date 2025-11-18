@@ -1,6 +1,6 @@
 //! UIとTimerクラスを統合するメインアプリケーション。
 
-import { Timer, TimerState, TimerMode } from './timer';
+import { Timer, TimerState, TimerMode } from '../core/timer';
 
 //! アプリケーションクラス。
 class App {

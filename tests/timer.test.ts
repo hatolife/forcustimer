@@ -1,7 +1,7 @@
 //! Timerクラスのテスト。
 //! TDD (Test-Driven Development) アプローチで作成。
 
-import { Timer } from '../src/timer';
+import { Timer } from '../src/core/timer';
 
 describe('Timer', () => {
 	let timer: Timer;

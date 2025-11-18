@@ -1,7 +1,7 @@
 //! Appクラスの統合テスト。
 //! UIとTimerクラスの統合動作を確認する。
 
-import { App } from '../src/app';
+import { App } from '../src/ui/app';
 
 describe('App - UI Integration', () => {
 	let app: App | null = null;
