@@ -271,3 +271,84 @@ h1 {
 		width: 100%;
 	}
 }
+
+/* 超小画面対応 (300px以下) */
+@media (max-width: 300px) {
+	body {
+		padding: 10px;
+	}
+
+	.container {
+		padding: 20px 10px;
+	}
+
+	/* タイトルとモード表示を非表示 */
+	h1 {
+		display: none;
+	}
+
+	.mode {
+		display: none;
+	}
+
+	/* タイマー表示エリアのマージンを削減 */
+	.timer-display {
+		margin: 20px 0;
+	}
+
+	/* 時間表示を小さく */
+	.time {
+		font-size: 3rem;
+	}
+
+	/* コントロールボタンのパディングを削減 */
+	.controls {
+		margin: 15px 0;
+		gap: 5px;
+	}
+
+	.btn {
+		padding: 10px 15px;
+		font-size: 0.9rem;
+		letter-spacing: 0.5px;
+	}
+
+	/* モード切替ボタンのパディングを削減 */
+	.mode-switch {
+		margin-top: 15px;
+		gap: 5px;
+	}
+
+	.mode-btn {
+		padding: 8px 12px;
+		font-size: 0.85rem;
+		letter-spacing: 0.5px;
+	}
+
+	/* カスタムタイマーセクションのパディングを削減 */
+	.custom-timer-section {
+		margin-top: 15px;
+		padding-top: 15px;
+	}
+
+	.custom-timer-label {
+		font-size: 0.8rem;
+		margin-bottom: 8px;
+	}
+
+	.custom-timer-input-group {
+		gap: 5px;
+	}
+
+	.custom-timer-input {
+		padding: 8px 12px;
+		font-size: 0.9rem;
+	}
+
+	/* 完了メッセージのパディングを削減 */
+	.complete-message {
+		margin-top: 15px;
+		padding: 10px 15px;
+		font-size: 1rem;
+	}
+}
