@@ -23,7 +23,8 @@
 			"Bash(dprint --version:*)",
 			"Bash(dprint init:*)",
 			"Bash(dprint fmt:*)",
-			"Bash(cat:*)"
+			"Bash(cat:*)",
+			"WebSearch"
 		],
 		"deny": [],
 		"ask": []
