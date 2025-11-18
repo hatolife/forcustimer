@@ -275,7 +275,7 @@ h1 {
 /* 超小画面対応 (300px以下) */
 @media (max-width: 300px) {
 	body {
-		padding: 5px;
+		padding: 0;
 	}
 
 	.container {
@@ -308,10 +308,12 @@ h1 {
 		gap: 3px;
 	}
 
+	/* ボタンの高さを確保しつつ横幅を最適化 */
 	.btn {
-		padding: 8px 10px;
+		padding: 12px 8px;
 		font-size: 3vw;
 		letter-spacing: 0.3px;
+		min-height: 44px;
 	}
 
 	/* モード切替ボタンのパディングを削減 */
@@ -322,29 +324,15 @@ h1 {
 	}
 
 	.mode-btn {
-		padding: 6px 8px;
+		padding: 10px 8px;
 		font-size: 2.8vw;
 		letter-spacing: 0.3px;
+		min-height: 40px;
 	}
 
-	/* カスタムタイマーセクションのパディングを削減 */
+	/* カスタムタイマーセクション全体を非表示 */
 	.custom-timer-section {
-		margin-top: 10px;
-		padding: 10px 5px 5px 5px;
-	}
-
-	.custom-timer-label {
-		font-size: 2.5vw;
-		margin-bottom: 5px;
-	}
-
-	.custom-timer-input-group {
-		gap: 3px;
-	}
-
-	.custom-timer-input {
-		padding: 6px 8px;
-		font-size: 3vw;
+		display: none;
 	}
 
 	/* 完了メッセージのパディングを削減 */
