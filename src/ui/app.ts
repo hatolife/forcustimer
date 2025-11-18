@@ -309,32 +309,48 @@ class App {
 	private setupCustomTimer(): void {
 		const customTimerBtn = document.getElementById('custom-timer-btn');
 		const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+		const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 
-		if (customTimerBtn && customMinutesInput) {
+		if (customTimerBtn && customMinutesInput && customSecondsInput) {
 			customTimerBtn.addEventListener('click', () => {
-				const minutes = parseInt(customMinutesInput.value, 10);
+				const minutes = parseInt(customMinutesInput.value || '0', 10);
+				const seconds = parseInt(customSecondsInput.value || '0', 10);
 
 				// ! 入力値の検証。
-				if (isNaN(minutes) || minutes < 1 || minutes > 999) {
-					alert('1〜999分の範囲で入力してください。');
+				if (isNaN(minutes) || minutes < 0 || minutes > 999) {
+					alert('分は0〜999の範囲で入力してください。');
+					return;
+				}
+
+				if (isNaN(seconds) || seconds < 0 || seconds > 59) {
+					alert('秒は0〜59の範囲で入力してください。');
+					return;
+				}
+
+				// ! 両方0の場合はエラー。
+				if (minutes === 0 && seconds === 0) {
+					alert('時間を入力してください。');
 					return;
 				}
 
 				// ! カスタムタイマーを設定。
-				this.timer.setCustomMinutes(minutes);
+				this.timer.setCustomTime(minutes, seconds);
 				this.updateDisplay();
 				this.updateModeButtons();
 
 				// ! 入力欄をクリア。
 				customMinutesInput.value = '';
+				customSecondsInput.value = '';
 			});
 
 			// ! Enterキーでも設定できるようにする。
-			customMinutesInput.addEventListener('keypress', (e) => {
+			const handleEnter = (e: KeyboardEvent) => {
 				if (e.key === 'Enter') {
 					customTimerBtn.click();
 				}
-			});
+			};
+			customMinutesInput.addEventListener('keypress', handleEnter);
+			customSecondsInput.addEventListener('keypress', handleEnter);
 		}
 	}
 }

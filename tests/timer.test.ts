@@ -272,4 +272,56 @@ describe('Timer', () => {
 			expect(onComplete).not.toHaveBeenCalled();
 		});
 	});
+
+	describe('setCustomTime', () => {
+		it('分と秒を指定してカスタムタイマーを設定できること', () => {
+			timer.setCustomTime(5, 30);
+			const state = timer.getState();
+			expect(state.mode).toBe('custom');
+			expect(state.remainingSeconds).toBe(330); // ! 5分30秒 = 330秒。
+			expect(state.status).toBe('idle');
+		});
+
+		it('秒のみを指定してカスタムタイマーを設定できること', () => {
+			timer.setCustomTime(0, 45);
+			const state = timer.getState();
+			expect(state.mode).toBe('custom');
+			expect(state.remainingSeconds).toBe(45);
+		});
+
+		it('0分0秒を指定した場合は1秒に設定されること', () => {
+			timer.setCustomTime(0, 0);
+			const state = timer.getState();
+			expect(state.remainingSeconds).toBe(1); // ! 最小値は1秒。
+		});
+
+		it('負の値を指定した場合も1秒に設定されること', () => {
+			timer.setCustomTime(-1, -1);
+			const state = timer.getState();
+			expect(state.remainingSeconds).toBe(1);
+		});
+
+		it('setCustomMinutesはsetCustomTimeを使用していること', () => {
+			timer.setCustomMinutes(10);
+			const state = timer.getState();
+			expect(state.mode).toBe('custom');
+			expect(state.remainingSeconds).toBe(600); // ! 10分 = 600秒。
+		});
+
+		it('カスタムタイマーが正常に動作すること', () => {
+			jest.useFakeTimers();
+
+			timer.setCustomTime(0, 5);
+			timer.start();
+
+			jest.advanceTimersByTime(3000);
+			expect(timer.getState().remainingSeconds).toBe(2);
+
+			jest.advanceTimersByTime(2000);
+			expect(timer.getState().remainingSeconds).toBe(0);
+			expect(timer.getState().status).toBe('idle');
+
+			jest.useRealTimers();
+		});
+	});
 });

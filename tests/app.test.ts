@@ -29,15 +29,24 @@ describe('App - UI Integration', () => {
 				</div>
 
 				<div class="custom-timer-section">
-					<label for="custom-minutes" class="custom-timer-label">Custom Timer (minutes):</label>
+					<label for="custom-minutes" class="custom-timer-label">Custom Timer:</label>
 					<div class="custom-timer-input-group">
 						<input
 							type="number"
 							id="custom-minutes"
 							class="custom-timer-input"
-							min="1"
+							min="0"
 							max="999"
-							placeholder="e.g. 10"
+							placeholder="min"
+						/>
+						<span class="time-separator">:</span>
+						<input
+							type="number"
+							id="custom-seconds"
+							class="custom-timer-input"
+							min="0"
+							max="59"
+							placeholder="sec"
 						/>
 						<button id="custom-timer-btn" class="btn btn-tertiary">Set</button>
 					</div>
@@ -374,11 +383,13 @@ describe('App - UI Integration', () => {
 			app = new App();
 			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			// ! 10分を入力してSetボタンをクリック。
+			// ! 10分0秒を入力してSetボタンをクリック。
 			customMinutesInput.value = '10';
+			customSecondsInput.value = '0';
 			customTimerBtn.click();
 
 			// ! 表示を確認。
@@ -386,13 +397,49 @@ describe('App - UI Integration', () => {
 			expect(modeDisplay?.textContent).toBe('Custom');
 		});
 
+		it('カスタムタイマーで5分30秒を設定すると05:30に表示が変わること', () => {
+			app = new App();
+			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
+			const timeDisplay = document.getElementById('time');
+			const modeDisplay = document.getElementById('mode');
+
+			// ! 5分30秒を入力してSetボタンをクリック。
+			customMinutesInput.value = '5';
+			customSecondsInput.value = '30';
+			customTimerBtn.click();
+
+			// ! 表示を確認。
+			expect(timeDisplay?.textContent).toBe('05:30');
+			expect(modeDisplay?.textContent).toBe('Custom');
+		});
+
+		it('カスタムタイマーで秒のみ設定できること', () => {
+			app = new App();
+			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
+			const timeDisplay = document.getElementById('time');
+
+			// ! 0分45秒を入力してSetボタンをクリック。
+			customMinutesInput.value = '0';
+			customSecondsInput.value = '45';
+			customTimerBtn.click();
+
+			// ! 表示を確認。
+			expect(timeDisplay?.textContent).toBe('00:45');
+		});
+
 		it('Enterキーでもカスタムタイマーを設定できること', () => {
 			app = new App();
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 
-			// ! 5分を入力してEnterキーを押す。
+			// ! 5分0秒を入力してEnterキーを押す。
 			customMinutesInput.value = '5';
+			customSecondsInput.value = '0';
 			const enterEvent = new KeyboardEvent('keypress', { key: 'Enter' });
 			customMinutesInput.dispatchEvent(enterEvent);
 

@@ -41,15 +41,24 @@
 
 		<!-- カスタムタイマー -->
 		<div class="custom-timer-section">
-			<label for="custom-minutes" class="custom-timer-label">Custom Timer (minutes):</label>
+			<label for="custom-minutes" class="custom-timer-label">Custom Timer:</label>
 			<div class="custom-timer-input-group">
 				<input
 					type="number"
 					id="custom-minutes"
 					class="custom-timer-input"
-					min="1"
+					min="0"
 					max="999"
-					placeholder="e.g. 10"
+					placeholder="min"
+				/>
+				<span class="time-separator">:</span>
+				<input
+					type="number"
+					id="custom-seconds"
+					class="custom-timer-input"
+					min="0"
+					max="59"
+					placeholder="sec"
 				/>
 				<button id="custom-timer-btn" class="btn btn-tertiary">Set</button>
 			</div>

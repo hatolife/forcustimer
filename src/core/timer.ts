@@ -143,20 +143,29 @@ export class Timer {
 	// ! カスタムタイマーの時間を設定する。
 	// ! モードをcustomに変更し、指定した分数を設定。
 	setCustomMinutes(minutes: number): void {
+		this.setCustomTime(minutes, 0);
+	}
+
+	// ! カスタムタイマーの時間を設定する（分と秒）。
+	// ! モードをcustomに変更し、指定した分数と秒数を設定。
+	setCustomTime(minutes: number, seconds: number): void {
 		// ! 実行中のタイマーを停止。
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
 			this.intervalId = null;
 		}
 
-		// ! 分数を秒数に変換。
-		const seconds = minutes * 60;
+		// ! 分数と秒数を合計秒数に変換。
+		const totalSeconds = minutes * 60 + seconds;
+
+		// ! 0秒の場合は1秒に設定（最小値）。
+		const finalSeconds = Math.max(1, totalSeconds);
 
 		// ! カスタムモードのデフォルト時間を更新。
-		MODE_DURATIONS.custom = seconds;
+		MODE_DURATIONS.custom = finalSeconds;
 
 		this.state.mode = 'custom';
 		this.state.status = 'idle';
-		this.state.remainingSeconds = seconds;
+		this.state.remainingSeconds = finalSeconds;
 	}
 }

@@ -22,7 +22,8 @@
 			"Bash(export PATH=\"/home/y-hayasaki/.dprint/bin:$PATH\")",
 			"Bash(dprint --version:*)",
 			"Bash(dprint init:*)",
-			"Bash(dprint fmt:*)"
+			"Bash(dprint fmt:*)",
+			"Bash(cat:*)"
 		],
 		"deny": [],
 		"ask": []

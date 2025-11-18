@@ -201,8 +201,14 @@ h1 {
 	font-size: var(--font-size-base);
 	font-weight: 600;
 	text-align: center;
-	width: 120px;
+	width: 80px;
 	color: var(--color-text);
+}
+
+.time-separator {
+	font-size: var(--font-size-2xl);
+	font-weight: 700;
+	color: var(--color-primary);
 }
 
 .custom-timer-input:focus {
