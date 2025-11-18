@@ -1,0 +1,70 @@
+/* 超小画面レイアウト (max-width: 300px) */
+@media (max-width: 300px) {
+	body {
+		padding: 0;
+	}
+
+	.container {
+		padding: 0;
+		border-radius: var(--border-radius);
+	}
+
+	/* タイトルとモード表示を非表示 */
+	h1 {
+		display: none;
+	}
+
+	.mode {
+		display: none;
+	}
+
+	/* タイマー表示エリアのマージンを削減 */
+	.timer-display {
+		margin: var(--spacing-sm) 0;
+	}
+
+	/* 時間表示を画面幅に合わせて縮小 (画面幅の25%) */
+	.time {
+		font-size: 25vw;
+	}
+
+	/* コントロールボタンのパディングを削減 */
+	.controls {
+		margin: var(--spacing-sm) var(--spacing-xs);
+		gap: 3px;
+	}
+
+	/* ボタンの高さを確保しつつ横幅を最適化 */
+	.btn {
+		padding: 12px 8px;
+		font-size: clamp(11px, 3vw, 16px);
+		letter-spacing: 0.3px;
+		min-height: var(--min-touch-target);
+	}
+
+	/* モード切替ボタンのパディングを削減 */
+	.mode-switch {
+		margin-top: var(--spacing-sm);
+		gap: 3px;
+		padding: 0 var(--spacing-xs);
+	}
+
+	.mode-btn {
+		padding: 10px 8px;
+		font-size: clamp(10px, 2.8vw, 14px);
+		letter-spacing: 0.3px;
+		min-height: 40px;
+	}
+
+	/* カスタムタイマーセクション全体を非表示 */
+	.custom-timer-section {
+		display: none;
+	}
+
+	/* 完了メッセージのパディングを削減 */
+	.complete-message {
+		margin: var(--spacing-sm) var(--spacing-xs);
+		padding: 8px var(--spacing-sm);
+		font-size: clamp(11px, 3.5vw, 16px);
+	}
+}

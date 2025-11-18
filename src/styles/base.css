@@ -1,0 +1,217 @@
+/* リセットとベーススタイル */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+	background: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: var(--color-text);
+	padding: var(--spacing-lg);
+}
+
+/* コンテナ */
+.container {
+	background: var(--color-white);
+	border-radius: var(--border-radius-large);
+	padding: var(--spacing-xxl);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	max-width: 500px;
+	width: 100%;
+	text-align: center;
+}
+
+/* タイトル */
+h1 {
+	font-size: var(--font-size-3xl);
+	margin-bottom: var(--spacing-xl);
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+/* タイマー表示エリア */
+.timer-display {
+	margin: var(--spacing-xxl) 0;
+}
+
+.mode {
+	font-size: var(--font-size-xl);
+	color: var(--color-text-light);
+	margin-bottom: var(--spacing-sm);
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-weight: 500;
+}
+
+.time {
+	font-size: var(--font-size-5xl);
+	font-weight: 700;
+	color: var(--color-text);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.05em;
+}
+
+/* 共通: Flexコンテナ */
+.controls,
+.mode-switch {
+	display: flex;
+	gap: var(--spacing-sm);
+	justify-content: center;
+}
+
+.controls {
+	gap: var(--spacing-md);
+	margin: var(--spacing-xl) 0;
+}
+
+.mode-switch {
+	margin-top: var(--spacing-xl);
+}
+
+/* 共通: ボタンベーススタイル */
+.btn,
+.mode-btn {
+	border-radius: var(--border-radius);
+	font-weight: 600;
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	flex: 1;
+}
+
+/* コントロールボタン */
+.btn {
+	padding: var(--btn-padding);
+	border: none;
+	font-size: var(--btn-font-size);
+	max-width: var(--btn-max-width);
+	color: var(--color-white);
+}
+
+.btn:hover:not(:disabled) {
+	background: var(--color-hover);
+}
+
+.btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-primary {
+	background: var(--color-primary);
+}
+
+.btn-secondary {
+	background: var(--color-secondary);
+}
+
+.btn-tertiary {
+	background: var(--color-tertiary);
+}
+
+/* モード切替ボタン */
+.mode-btn {
+	padding: var(--mode-btn-padding);
+	border: 2px solid var(--color-primary);
+	background: var(--color-white);
+	color: var(--color-primary);
+	font-size: var(--mode-btn-font-size);
+	max-width: var(--mode-btn-max-width);
+}
+
+.mode-btn:hover {
+	background: var(--color-hover);
+}
+
+.mode-btn.active {
+	background: var(--color-primary);
+	color: var(--color-white);
+}
+
+/* タイマー完了時のスタイル */
+.time.completed {
+	color: var(--color-success);
+	font-weight: 900;
+}
+
+.container.completed {
+	background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+	transition: background 0.5s ease;
+}
+
+.complete-message {
+	display: none;
+	margin-top: var(--spacing-lg);
+	padding: var(--spacing-md) var(--spacing-xl);
+	background: var(--color-success);
+	color: var(--color-white);
+	border-radius: var(--border-radius);
+	font-size: var(--font-size-xl);
+	font-weight: 600;
+	animation: slideIn 0.5s ease-out;
+}
+
+.complete-message.show {
+	display: block;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+/* カスタムタイマー */
+.custom-timer-section {
+	margin-top: var(--spacing-xl);
+	padding-top: var(--spacing-lg);
+	border-top: 1px solid #e0e0e0;
+}
+
+.custom-timer-label {
+	display: block;
+	font-size: var(--font-size-sm);
+	color: var(--color-text-light);
+	margin-bottom: var(--spacing-sm);
+	font-weight: 600;
+}
+
+.custom-timer-input-group {
+	display: flex;
+	gap: var(--spacing-sm);
+	justify-content: center;
+	align-items: center;
+}
+
+.custom-timer-input {
+	padding: 12px 20px;
+	border: 2px solid var(--color-primary);
+	border-radius: var(--border-radius);
+	font-size: var(--font-size-base);
+	font-weight: 600;
+	text-align: center;
+	width: 120px;
+	color: var(--color-text);
+}
+
+.custom-timer-input:focus {
+	outline: none;
+	border-color: var(--color-primary-dark);
+	background: var(--color-hover);
+}
+
+.custom-timer-input::placeholder {
+	color: var(--color-text-light);
+	font-weight: 400;
+}
