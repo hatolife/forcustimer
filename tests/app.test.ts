@@ -236,20 +236,35 @@ describe('App - UI Integration', () => {
 		});
 	});
 
-	describe('通知機能', () => {
+	describe('通知機能（Service Worker経由・iOS PWA対応）', () => {
+		let mockPostMessage: jest.Mock;
+
 		beforeEach(() => {
 			//! Notification APIのモック。
 			global.Notification = {
 				permission: 'granted',
 				requestPermission: jest.fn().mockResolvedValue('granted'),
 			} as any;
+
+			//! Service Workerのモック。
+			mockPostMessage = jest.fn();
+			Object.defineProperty(navigator, 'serviceWorker', {
+				value: {
+					controller: {
+						postMessage: mockPostMessage,
+					},
+					ready: Promise.resolve({
+						active: {
+							postMessage: mockPostMessage,
+						},
+					}),
+				},
+				writable: true,
+				configurable: true,
+			});
 		});
 
-		it('タイマー完了時に通知が表示されること', () => {
-			const mockNotification = jest.fn();
-			global.Notification = mockNotification as any;
-			(global.Notification as any).permission = 'granted';
-
+		it('タイマー完了時にService WorkerへメッセージがpostされることWork', () => {
 			app = new App();
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 
@@ -258,21 +273,19 @@ describe('App - UI Integration', () => {
 			//! 25分経過してタイマー完了。
 			jest.advanceTimersByTime(1500100);
 
-			//! 通知が呼ばれたことを確認。
-			expect(mockNotification).toHaveBeenCalledWith(
-				'作業時間終了!',
-				expect.objectContaining({
+			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			expect(mockPostMessage).toHaveBeenCalledWith({
+				type: 'SHOW_NOTIFICATION',
+				payload: {
+					title: '作業時間終了!',
 					body: '25分の作業お疲れ様でした!',
 					icon: '/icons/icon-192x192.png',
-				})
-			);
+					badge: '/icons/icon-96x96.png',
+				},
+			});
 		});
 
-		it('Break完了時も通知が表示されること', () => {
-			const mockNotification = jest.fn();
-			global.Notification = mockNotification as any;
-			(global.Notification as any).permission = 'granted';
-
+		it('Break完了時もService Workerへメッセージがpostされること', () => {
 			app = new App();
 			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
@@ -283,20 +296,49 @@ describe('App - UI Integration', () => {
 			//! 5分経過してタイマー完了。
 			jest.advanceTimersByTime(300100);
 
-			//! 通知が呼ばれたことを確認。
-			expect(mockNotification).toHaveBeenCalledWith(
-				'休憩時間終了!',
-				expect.objectContaining({
+			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			expect(mockPostMessage).toHaveBeenCalledWith({
+				type: 'SHOW_NOTIFICATION',
+				payload: {
+					title: '休憩時間終了!',
 					body: '5分の休憩終了です!',
 					icon: '/icons/icon-192x192.png',
-				})
-			);
+					badge: '/icons/icon-96x96.png',
+				},
+			});
 		});
 
-		it('通知許可がない場合は通知が表示されないこと', () => {
-			const mockNotification = jest.fn();
-			global.Notification = mockNotification as any;
-			(global.Notification as any).permission = 'denied';
+		it('カスタムタイマー完了時もService Workerへメッセージがpostされること', () => {
+			app = new App();
+			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
+			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			//! 1分(60秒)のカスタムタイマーを設定。
+			customMinutesInput.value = '1';
+			customTimerBtn.click();
+			startBtn.click();
+
+			//! 60秒経過してタイマー完了。
+			jest.advanceTimersByTime(60100);
+
+			//! Service WorkerへのpostMessageが呼ばれたことを確認。
+			expect(mockPostMessage).toHaveBeenCalledWith({
+				type: 'SHOW_NOTIFICATION',
+				payload: {
+					title: 'カスタムタイマー終了!',
+					body: 'カスタムタイマーが終了しました!',
+					icon: '/icons/icon-192x192.png',
+					badge: '/icons/icon-96x96.png',
+				},
+			});
+		});
+
+		it('通知許可がない場合はService Workerへメッセージがpostされないこと', () => {
+			global.Notification = {
+				permission: 'denied',
+				requestPermission: jest.fn(),
+			} as any;
 
 			app = new App();
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
@@ -304,8 +346,26 @@ describe('App - UI Integration', () => {
 			startBtn.click();
 			jest.advanceTimersByTime(1500100);
 
-			//! 通知が呼ばれないことを確認。
-			expect(mockNotification).not.toHaveBeenCalled();
+			//! Service WorkerへのpostMessageが呼ばれないことを確認。
+			expect(mockPostMessage).not.toHaveBeenCalled();
+		});
+
+		it('Service Workerが利用できない場合は何もしないこと', () => {
+			//! Service Workerを削除。
+			Object.defineProperty(navigator, 'serviceWorker', {
+				value: undefined,
+				writable: true,
+				configurable: true,
+			});
+
+			app = new App();
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			startBtn.click();
+			jest.advanceTimersByTime(1500100);
+
+			//! エラーが投げられないことを確認（正常終了）。
+			expect(true).toBe(true);
 		});
 	});
 
@@ -326,34 +386,6 @@ describe('App - UI Integration', () => {
 			expect(modeDisplay?.textContent).toBe('Custom');
 		});
 
-		it('カスタムタイマー完了時も通知が表示されること', () => {
-			const mockNotification = jest.fn();
-			global.Notification = mockNotification as any;
-			(global.Notification as any).permission = 'granted';
-
-			app = new App();
-			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
-			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
-			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
-
-			//! 1分(60秒)のカスタムタイマーを設定。
-			customMinutesInput.value = '1';
-			customTimerBtn.click();
-			startBtn.click();
-
-			//! 60秒経過してタイマー完了。
-			jest.advanceTimersByTime(60100);
-
-			//! 通知が呼ばれたことを確認。
-			expect(mockNotification).toHaveBeenCalledWith(
-				'カスタムタイマー終了!',
-				expect.objectContaining({
-					body: 'カスタムタイマーが終了しました!',
-					icon: '/icons/icon-192x192.png',
-				})
-			);
-		});
-
 		it('Enterキーでもカスタムタイマーを設定できること', () => {
 			app = new App();
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
@@ -369,8 +401,52 @@ describe('App - UI Integration', () => {
 		});
 	});
 
-	describe('通知許可リクエスト', () => {
-		it('Notification.permission が default の場合にリクエストが呼ばれること', () => {
+	describe('通知許可ベルアイコン（iOS PWA対応）', () => {
+		beforeEach(() => {
+			//! ベルアイコンボタンのHTMLを追加。
+			const bellButton = `
+				<button id="notification-bell" class="notification-bell" aria-label="通知設定">
+					<svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+						<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+						<line class="bell-slash" x1="2" y1="2" x2="22" y2="22" stroke-width="2"></line>
+					</svg>
+				</button>
+			`;
+			document.body.insertAdjacentHTML('beforeend', bellButton);
+		});
+
+		it('通知許可がない場合、ベルアイコンに斜線が表示されること', () => {
+			global.Notification = {
+				permission: 'default',
+				requestPermission: jest.fn().mockResolvedValue('granted'),
+			} as any;
+
+			app = new App();
+
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+			expect(bellSlash?.style.display).not.toBe('none');
+		});
+
+		it('通知許可がある場合、ベルアイコンに斜線が表示されないこと', () => {
+			global.Notification = {
+				permission: 'granted',
+				requestPermission: jest.fn(),
+			} as any;
+
+			app = new App();
+
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			expect(bellIcon?.classList.contains('disabled')).toBe(false);
+			expect(bellSlash?.style.display).toBe('none');
+		});
+
+		it('ベルアイコンをクリックすると通知許可ダイアログが表示されること', async () => {
 			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
 				permission: 'default',
@@ -379,19 +455,72 @@ describe('App - UI Integration', () => {
 
 			app = new App();
 
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			bellButton.click();
+
+			//! Promiseの解決を待つ。
+			await Promise.resolve();
+
 			expect(mockRequestPermission).toHaveBeenCalledTimes(1);
 		});
 
-		it('Notification.permission が granted の場合にリクエストが呼ばれないこと', () => {
-			const mockRequestPermission = jest.fn();
+		it('通知許可後、ベルアイコンの斜線が消えること', async () => {
+			const mockRequestPermission = jest.fn().mockResolvedValue('granted');
 			global.Notification = {
-				permission: 'granted',
+				permission: 'default',
 				requestPermission: mockRequestPermission,
 			} as any;
 
+			//! permissionをgrantedに変更するモック。
+			mockRequestPermission.mockImplementation(async () => {
+				(global.Notification as any).permission = 'granted';
+				return 'granted';
+			});
+
 			app = new App();
 
-			expect(mockRequestPermission).not.toHaveBeenCalled();
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			//! 初期状態で斜線が表示されている。
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+
+			//! クリックして許可。
+			bellButton.click();
+			await Promise.resolve();
+
+			//! 許可後、斜線が消える。
+			expect(bellIcon?.classList.contains('disabled')).toBe(false);
+			expect(bellSlash?.style.display).toBe('none');
+		});
+
+		it('通知許可を拒否された場合、ベルアイコンは斜線のまま', async () => {
+			const mockRequestPermission = jest.fn().mockResolvedValue('denied');
+			global.Notification = {
+				permission: 'default',
+				requestPermission: mockRequestPermission,
+			} as any;
+
+			//! permissionをdeniedに変更するモック。
+			mockRequestPermission.mockImplementation(async () => {
+				(global.Notification as any).permission = 'denied';
+				return 'denied';
+			});
+
+			app = new App();
+
+			const bellButton = document.getElementById('notification-bell') as HTMLButtonElement;
+			const bellIcon = document.querySelector('.bell-icon');
+			const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+			//! クリックして拒否。
+			bellButton.click();
+			await Promise.resolve();
+
+			//! 拒否後も斜線が表示されたまま。
+			expect(bellIcon?.classList.contains('disabled')).toBe(true);
+			expect(bellSlash?.style.display).not.toBe('none');
 		});
 	});
 

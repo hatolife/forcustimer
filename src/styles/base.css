@@ -215,3 +215,51 @@ h1 {
 	color: var(--color-text-light);
 	font-weight: 400;
 }
+
+/* 通知許可ベルアイコン（iOS PWA対応） */
+.notification-bell {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	width: 48px;
+	height: 48px;
+	border: none;
+	background: var(--color-white);
+	border-radius: 50%;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999;
+	transition: all 0.3s ease;
+}
+
+.notification-bell:hover {
+	transform: scale(1.1);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.notification-bell:active {
+	transform: scale(0.95);
+}
+
+.bell-icon {
+	width: 24px;
+	height: 24px;
+	color: var(--color-primary);
+	transition: color 0.3s ease;
+}
+
+.bell-icon.disabled {
+	color: var(--color-text-light);
+}
+
+.bell-slash {
+	stroke: var(--color-text-light);
+	display: none;
+}
+
+.bell-icon.disabled .bell-slash {
+	display: block;
+}

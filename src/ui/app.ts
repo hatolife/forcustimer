@@ -15,9 +15,6 @@ class App {
 	private updateIntervalId: number | null = null;
 
 	constructor() {
-		//! 通知許可をリクエスト。
-		this.requestNotificationPermission();
-
 		//! Timerインスタンスを作成(完了コールバック付き)。
 		this.timer = new Timer((mode) => this.onTimerComplete(mode));
 
@@ -35,6 +32,9 @@ class App {
 
 		//! 初期表示を更新。
 		this.updateDisplay();
+
+		//! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
+		this.setupNotificationBellIcon();
 	}
 
 	//! DOM要素を安全に取得するヘルパーメソッド。
@@ -166,10 +166,62 @@ class App {
 		}
 	}
 
-	//! 通知許可をリクエスト。
-	private requestNotificationPermission(): void {
-		if ('Notification' in window && Notification.permission === 'default') {
-			Notification.requestPermission();
+	//! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
+	private setupNotificationBellIcon(): void {
+		const bellButton = document.getElementById('notification-bell');
+		if (!bellButton) {
+			return;
+		}
+
+		//! 初期表示を更新。
+		this.updateNotificationBellIcon();
+
+		//! クリックイベントを設定。
+		bellButton.addEventListener('click', () => this.handleNotificationBellClick());
+	}
+
+	//! ベルアイコンの表示を更新。
+	private updateNotificationBellIcon(): void {
+		if (!('Notification' in window)) {
+			return;
+		}
+
+		const bellIcon = document.querySelector('.bell-icon');
+		const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
+
+		if (!bellIcon || !bellSlash) {
+			return;
+		}
+
+		//! 通知許可状態に応じて表示を切り替え。
+		if (Notification.permission === 'granted') {
+			bellIcon.classList.remove('disabled');
+			bellSlash.style.display = 'none';
+		} else {
+			bellIcon.classList.add('disabled');
+			bellSlash.style.display = '';
+		}
+	}
+
+	//! ベルアイコンクリック時のハンドラー。
+	private async handleNotificationBellClick(): Promise<void> {
+		if (!('Notification' in window)) {
+			return;
+		}
+
+		//! 既に許可済みの場合は何もしない。
+		if (Notification.permission === 'granted') {
+			return;
+		}
+
+		try {
+			//! 通知許可をリクエスト。
+			await Notification.requestPermission();
+
+			//! 許可状態が変わったらアイコンを更新。
+			this.updateNotificationBellIcon();
+		} catch (error) {
+			console.error('Failed to request notification permission:', error);
 		}
 	}
 
@@ -217,9 +269,14 @@ class App {
 		completeMessage.classList.remove('show');
 	}
 
-	//! 通知を表示。
+	//! 通知を表示（Service Worker経由・iOS PWA対応）。
 	private showNotification(mode: TimerMode): void {
 		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		//! Service Workerが利用できない場合は何もしない。
+		if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
 			return;
 		}
 
@@ -232,10 +289,15 @@ class App {
 			mode === 'break' ? '5分の休憩終了です!' :
 			'カスタムタイマーが終了しました!';
 
-		new Notification(title, {
-			body: body,
-			icon: '/icons/icon-192x192.png',
-			badge: '/icons/icon-96x96.png',
+		//! Service Workerへメッセージを送信。
+		navigator.serviceWorker.controller.postMessage({
+			type: 'SHOW_NOTIFICATION',
+			payload: {
+				title: title,
+				body: body,
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+			},
 		});
 	}
 

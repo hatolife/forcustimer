@@ -72,3 +72,17 @@ self.addEventListener('fetch', (event) => {
 		})
 	);
 });
+
+//! メッセージハンドラー（通知表示用・iOS PWA対応）。
+self.addEventListener('message', (event) => {
+	if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+		const { title, body, icon, badge } = event.data.payload;
+
+		//! Service Worker経由で通知を表示（iOS PWAで動作）。
+		self.registration.showNotification(title, {
+			body: body,
+			icon: icon,
+			badge: badge,
+		});
+	}
+});
