@@ -12,8 +12,9 @@ function fixImportsInFile(filePath) {
 
 	//! import文のパスに.js拡張子を追加。
 	//! import { ... } from './module' → import { ... } from './module.js'
+	//! import { ... } from '../module' → import { ... } from '../module.js'
 	const fixedContent = content.replace(
-		/from\s+['"](\.\/[^'"]+)['"]/g,
+		/from\s+['"](\.\.[\/\\][^'"]+|\.\/[^'"]+)['"]/g,
 		(match, modulePath) => {
 			//! 既に.jsで終わっている場合はそのまま。
 			if (modulePath.endsWith('.js')) {
