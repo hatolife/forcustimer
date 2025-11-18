@@ -10,7 +10,7 @@
 		"build": "tsc && npm run fix-imports && npm run generate-icons && npm run copy-files",
 		"fix-imports": "node scripts/fix-imports.js",
 		"generate-icons": "node scripts/generate-icons.js",
-		"copy-files": "mkdir -p dist && cp src/index.html dist/ && cp src/styles.css dist/ && (cp public/manifest.json dist/ || true) && (cp public/service-worker.js dist/ || true)",
+		"copy-files": "mkdir -p dist && cp src/index.html dist/ && cp src/styles.css dist/ && cp -r src/styles dist/ && (cp public/manifest.json dist/ || true) && (cp public/service-worker.js dist/ || true)",
 		"serve": "npx http-server dist -p 8080",
 		"dev": "npm run build && npm run serve"
 	},
