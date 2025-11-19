@@ -177,25 +177,11 @@ h1 {
 }
 
 /* カスタムタイマー */
-.custom-timer-section {
-	margin-top: var(--spacing-xl);
-	padding-top: var(--spacing-lg);
-	border-top: 1px solid #e0e0e0;
-}
-
-.custom-timer-label {
-	display: block;
-	font-size: var(--font-size-sm);
-	color: var(--color-text-light);
-	margin-bottom: var(--spacing-sm);
-	font-weight: 600;
-}
-
 .custom-timer-input-group {
 	display: flex;
 	gap: var(--spacing-sm);
-	justify-content: center;
 	align-items: center;
+	margin-top: var(--spacing-xl);
 }
 
 .custom-timer-input {
@@ -205,7 +191,7 @@ h1 {
 	font-size: var(--font-size-base);
 	font-weight: 600;
 	text-align: center;
-	width: 80px;
+	flex: 1;
 	color: var(--color-text);
 }
 
