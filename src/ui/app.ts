@@ -35,6 +35,9 @@ class App {
 
 		// ! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
 		this.setupNotificationBellIcon();
+
+		// ! 初回アクセス時に通知許可をリクエスト。
+		this.requestNotificationPermissionOnLoad();
 	}
 
 	// ! DOM要素を安全に取得するヘルパーメソッド。
@@ -271,9 +274,43 @@ class App {
 		completeMessage.classList.remove('show');
 	}
 
+	// ! 初回アクセス時に通知許可をリクエスト。
+	private async requestNotificationPermissionOnLoad(): Promise<void> {
+		if (!('Notification' in window)) {
+			console.log('このブラウザは通知をサポートしていません');
+			return;
+		}
+
+		// ! 既に許可済みまたは拒否済みの場合は何もしない。
+		if (Notification.permission !== 'default') {
+			console.log('通知許可状態:', Notification.permission);
+			return;
+		}
+
+		// ! ページ読み込み後、少し待ってから許可をリクエスト。
+		setTimeout(async () => {
+			try {
+				const permission = await Notification.requestPermission();
+				console.log('通知許可リクエスト結果:', permission);
+				this.updateNotificationBellIcon();
+			} catch (error) {
+				console.error('通知許可リクエストエラー:', error);
+			}
+		}, 1000);
+	}
+
 	// ! 通知を表示（PC・iOS PWA両対応）。
 	private async showNotification(mode: TimerMode): Promise<void> {
-		if (!('Notification' in window) || Notification.permission !== 'granted') {
+		console.log('showNotification called, mode:', mode);
+		console.log('Notification.permission:', Notification.permission);
+
+		if (!('Notification' in window)) {
+			console.warn('このブラウザは通知をサポートしていません');
+			return;
+		}
+
+		if (Notification.permission !== 'granted') {
+			console.warn('通知許可が得られていません。許可状態:', Notification.permission);
 			return;
 		}
 
@@ -293,26 +330,30 @@ class App {
 			icon: '/icons/icon-192x192.png',
 			badge: '/icons/icon-96x96.png',
 			requireInteraction: false,
-			tag: `timer-complete-${Date.now()}`, // ! 一意のタグで毎回新しい通知を表示。
+			tag: 'timer-complete', // ! 固定タグ。
 			renotify: true // ! 同じタグでも再通知。
 		};
 
-		// ! Service Worker経由で通知を表示（iOS PWA対応）。
+		console.log('通知を表示します:', title, options);
+
+		// ! PCブラウザでは直接通知を表示（最も確実）。
+		try {
+			const notification = new Notification(title, options);
+			console.log('直接通知を作成しました:', notification);
+			return;
+		} catch (error) {
+			console.error('直接通知の作成に失敗:', error);
+		}
+
+		// ! フォールバック: Service Worker経由で通知を表示（PWA対応）。
 		if (navigator.serviceWorker && navigator.serviceWorker.controller) {
 			try {
 				const registration = await navigator.serviceWorker.ready;
 				await registration.showNotification(title, options);
-				return;
+				console.log('Service Worker経由で通知を表示しました');
 			} catch (error) {
-				console.warn('Service Worker notification failed, falling back to direct notification:', error);
+				console.error('Service Worker通知も失敗:', error);
 			}
-		}
-
-		// ! フォールバック: 直接通知を表示（PCブラウザ対応）。
-		try {
-			new Notification(title, options);
-		} catch (error) {
-			console.error('Failed to show notification:', error);
 		}
 	}
 
