@@ -25,7 +25,8 @@
 			"Bash(dprint fmt:*)",
 			"Bash(cat:*)",
 			"WebSearch",
-			"Bash(npx dprint fmt)"
+			"Bash(npx dprint fmt)",
+			"Bash(npx dprint:*)"
 		],
 		"deny": [],
 		"ask": []
