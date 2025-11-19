@@ -478,6 +478,69 @@ describe('App - UI Integration', () => {
 		});
 	});
 
+	describe('Enterキー操作', () => {
+		it('Enterキーでタイマーを開始できること', () => {
+			app = new App();
+			const timeDisplay = document.getElementById('time');
+
+			// ! Enterキーを押す。
+			const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+			document.dispatchEvent(enterEvent);
+
+			// ! 1.1秒進める(更新ループが確実に動作するため)。
+			jest.advanceTimersByTime(1100);
+
+			// ! タイマーが開始されていることを確認。
+			expect(timeDisplay?.textContent).toBe('24:59');
+		});
+
+		it('Enterキーでタイマーを一時停止できること', () => {
+			app = new App();
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+
+			// ! タイマーを開始。
+			startBtn.click();
+
+			// ! 1秒進める。
+			jest.advanceTimersByTime(1000);
+
+			// ! Enterキーを押す。
+			const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+			document.dispatchEvent(enterEvent);
+
+			// ! さらに1秒進めてもタイマーが進まないことを確認。
+			const timeBeforePause = document.getElementById('time')?.textContent;
+			jest.advanceTimersByTime(1000);
+			const timeAfterPause = document.getElementById('time')?.textContent;
+			expect(timeBeforePause).toBe(timeAfterPause);
+		});
+
+		it('一時停止中にEnterキーで再開できること', () => {
+			app = new App();
+			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+			const pauseBtn = document.getElementById('pause-btn') as HTMLButtonElement;
+			const timeDisplay = document.getElementById('time');
+
+			// ! タイマーを開始して一時停止。
+			startBtn.click();
+			jest.advanceTimersByTime(1100);
+			pauseBtn.click();
+
+			// ! 一時停止時点では24:59のはず。
+			expect(timeDisplay?.textContent).toBe('24:59');
+
+			// ! Enterキーで再開。
+			const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+			document.dispatchEvent(enterEvent);
+
+			// ! 1.1秒進める。
+			jest.advanceTimersByTime(1100);
+
+			// ! タイマーが進んで24:58になっていることを確認。
+			expect(timeDisplay?.textContent).toBe('24:58');
+		});
+	});
+
 	describe('通知許可ベルアイコン（iOS PWA対応）', () => {
 		beforeEach(() => {
 			// ! ベルアイコンボタンのHTMLを追加。
