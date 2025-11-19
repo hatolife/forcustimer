@@ -12,6 +12,7 @@ class App {
 	private resetBtn: HTMLButtonElement;
 	private workModeBtn: HTMLButtonElement;
 	private breakModeBtn: HTMLButtonElement;
+	private customTimerInputGroup: HTMLElement;
 	private updateIntervalId: number | null = null;
 
 	constructor() {
@@ -26,6 +27,7 @@ class App {
 		this.resetBtn = this.getElement('reset-btn') as HTMLButtonElement;
 		this.workModeBtn = this.getElement('work-mode-btn') as HTMLButtonElement;
 		this.breakModeBtn = this.getElement('break-mode-btn') as HTMLButtonElement;
+		this.customTimerInputGroup = this.getElement('custom-timer-input-group') as HTMLElement;
 
 		// ! イベントリスナーを設定。
 		this.setupEventListeners();
@@ -171,6 +173,10 @@ class App {
 				this.startBtn.disabled = false;
 				this.pauseBtn.disabled = true;
 				this.resetBtn.disabled = true;
+				// ! idle状態ではモードボタンとカスタムタイマー入力を表示。
+				this.workModeBtn.classList.remove('hidden');
+				this.breakModeBtn.classList.remove('hidden');
+				this.customTimerInputGroup.classList.remove('hidden');
 				break;
 			case 'running':
 				this.startBtn.classList.add('hidden');
@@ -179,6 +185,10 @@ class App {
 				this.startBtn.disabled = true;
 				this.pauseBtn.disabled = false;
 				this.resetBtn.disabled = false;
+				// ! running状態ではモードボタンとカスタムタイマー入力を非表示。
+				this.workModeBtn.classList.add('hidden');
+				this.breakModeBtn.classList.add('hidden');
+				this.customTimerInputGroup.classList.add('hidden');
 				break;
 			case 'paused':
 				this.startBtn.classList.remove('hidden');
@@ -187,6 +197,10 @@ class App {
 				this.startBtn.disabled = false;
 				this.pauseBtn.disabled = true;
 				this.resetBtn.disabled = false;
+				// ! paused状態ではモードボタンとカスタムタイマー入力を表示。
+				this.workModeBtn.classList.remove('hidden');
+				this.breakModeBtn.classList.remove('hidden');
+				this.customTimerInputGroup.classList.remove('hidden');
 				break;
 		}
 	}

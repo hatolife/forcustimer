@@ -30,7 +30,7 @@ describe('App - UI Integration', () => {
 
 				<div class="custom-timer-section">
 					<label for="custom-minutes" class="custom-timer-label">Custom Timer:</label>
-					<div class="custom-timer-input-group">
+					<div id="custom-timer-input-group" class="custom-timer-input-group">
 						<input
 							type="number"
 							id="custom-minutes"
