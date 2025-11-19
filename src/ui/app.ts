@@ -212,28 +212,23 @@ class App {
 	// ! ベルアイコンクリック時のハンドラー。
 	private async handleNotificationBellClick(): Promise<void> {
 		if (!('Notification' in window)) {
-			console.warn('このブラウザは通知をサポートしていません');
 			return;
 		}
 
 		// ! 既に許可済みの場合は何もしない。
 		if (Notification.permission === 'granted') {
-			console.log('通知は既に許可されています');
 			return;
 		}
 
 		try {
 			// ! 通知許可をリクエスト。
-			console.log('通知許可をリクエストします...');
 			const permission = await Notification.requestPermission();
-			console.log('通知許可リクエスト結果:', permission);
 
 			// ! 許可状態が変わったらアイコンを更新。
 			this.updateNotificationBellIcon();
 
 			// ! 許可された場合はテスト通知を表示。
 			if (permission === 'granted') {
-				console.log('通知が許可されました。テスト通知を表示します。');
 				new Notification('通知が有効になりました', {
 					body: 'タイマー終了時に通知が表示されます',
 					icon: '/icons/icon-192x192.png',
@@ -241,7 +236,7 @@ class App {
 				});
 			}
 		} catch (error) {
-			console.error('通知許可リクエストに失敗:', error);
+			// ! 通知許可リクエストに失敗しても何もしない。
 		}
 	}
 
@@ -292,16 +287,11 @@ class App {
 
 	// ! 通知を表示（PC・iOS PWA両対応）。
 	private async showNotification(mode: TimerMode): Promise<void> {
-		console.log('showNotification called, mode:', mode);
-		console.log('Notification.permission:', Notification.permission);
-
 		if (!('Notification' in window)) {
-			console.warn('このブラウザは通知をサポートしていません');
 			return;
 		}
 
 		if (Notification.permission !== 'granted') {
-			console.warn('通知許可が得られていません。許可状態:', Notification.permission);
 			return;
 		}
 
@@ -325,15 +315,12 @@ class App {
 			renotify: true // ! 同じタグでも再通知。
 		};
 
-		console.log('通知を表示します:', title, options);
-
 		// ! PCブラウザでは直接通知を表示（最も確実）。
 		try {
-			const notification = new Notification(title, options);
-			console.log('直接通知を作成しました:', notification);
+			new Notification(title, options);
 			return;
 		} catch (error) {
-			console.error('直接通知の作成に失敗:', error);
+			// ! 直接通知が失敗した場合はService Workerにフォールバック。
 		}
 
 		// ! フォールバック: Service Worker経由で通知を表示（PWA対応）。
@@ -341,9 +328,8 @@ class App {
 			try {
 				const registration = await navigator.serviceWorker.ready;
 				await registration.showNotification(title, options);
-				console.log('Service Worker経由で通知を表示しました');
 			} catch (error) {
-				console.error('Service Worker通知も失敗:', error);
+				// ! Service Workerでも失敗した場合は何もしない。
 			}
 		}
 	}

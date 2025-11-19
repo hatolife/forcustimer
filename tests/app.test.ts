@@ -292,7 +292,7 @@ describe('App - UI Integration', () => {
 				requireInteraction: false,
 				renotify: true
 			});
-			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
+			expect(callArgs[1].tag).toBe('timer-complete');
 		});
 
 		it('Break完了時もService Worker経由で通知が表示されること', async () => {
@@ -320,7 +320,7 @@ describe('App - UI Integration', () => {
 				requireInteraction: false,
 				renotify: true
 			});
-			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
+			expect(callArgs[1].tag).toBe('timer-complete');
 		});
 
 		it('カスタムタイマー完了時もService Worker経由で通知が表示されること', async () => {
@@ -351,7 +351,7 @@ describe('App - UI Integration', () => {
 				requireInteraction: false,
 				renotify: true
 			});
-			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
+			expect(callArgs[1].tag).toBe('timer-complete');
 		});
 
 		it('通知許可がない場合は通知が表示されないこと', async () => {
@@ -406,7 +406,7 @@ describe('App - UI Integration', () => {
 				requireInteraction: false,
 				renotify: true
 			});
-			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
+			expect(callArgs[1].tag).toBe('timer-complete');
 
 			// ! エラーが投げられないことを確認（正常終了）。
 			expect(true).toBe(true);
