@@ -12,20 +12,16 @@
 		font-size: 4rem;
 	}
 
-	.controls {
-		flex-direction: column;
+	.button-area {
 		gap: var(--spacing-sm);
 	}
 
-	.btn {
+	.btn,
+	.mode-btn {
 		max-width: 100%;
 	}
 
-	.mode-switch {
-		flex-direction: column;
-	}
-
-	.mode-btn {
+	.custom-timer-input-group {
 		max-width: 100%;
 	}
 

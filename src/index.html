@@ -28,36 +28,39 @@
 			<div id="time" class="time">25:00</div>
 		</div>
 
-		<div class="controls">
+		<!-- ボタンエリア（4行縦並び） -->
+		<div class="button-area">
+			<!-- 1. Startボタン -->
 			<button id="start-btn" class="btn btn-primary">Start</button>
 			<button id="pause-btn" class="btn btn-secondary" disabled>Pause</button>
 			<button id="reset-btn" class="btn btn-tertiary" disabled>Reset</button>
-		</div>
 
-		<div class="mode-switch">
+			<!-- 2. Workボタン -->
 			<button id="work-mode-btn" class="mode-btn active">Work (25min)</button>
-			<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
-		</div>
 
-		<!-- カスタムタイマー -->
-		<div class="custom-timer-input-group">
-			<input
-				type="number"
-				id="custom-minutes"
-				class="custom-timer-input"
-				min="0"
-				max="999"
-				placeholder="min"
-			/>
-			<span class="time-separator">:</span>
-			<input
-				type="number"
-				id="custom-seconds"
-				class="custom-timer-input"
-				min="0"
-				max="59"
-				placeholder="sec"
-			/>
+			<!-- 3. Breakボタン -->
+			<button id="break-mode-btn" class="mode-btn">Break (5min)</button>
+
+			<!-- 4. カスタムタイマー入力 -->
+			<div class="custom-timer-input-group">
+				<input
+					type="number"
+					id="custom-minutes"
+					class="custom-timer-input"
+					min="0"
+					max="999"
+					placeholder="min"
+				/>
+				<span class="time-separator">:</span>
+				<input
+					type="number"
+					id="custom-seconds"
+					class="custom-timer-input"
+					min="0"
+					max="59"
+					placeholder="sec"
+				/>
+			</div>
 		</div>
 
 		<!-- 完了メッセージ -->
