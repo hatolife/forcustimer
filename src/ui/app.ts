@@ -69,20 +69,38 @@ class App {
 
 		// ! Workモードボタン。
 		this.workModeBtn.addEventListener('click', () => {
+			this.clearCompletionEffects();
 			this.timer.setMode('work');
+			this.timer.start();
 			this.updateDisplay();
 			this.updateModeButtons();
 		});
 
 		// ! Breakモードボタン。
 		this.breakModeBtn.addEventListener('click', () => {
+			this.clearCompletionEffects();
 			this.timer.setMode('break');
+			this.timer.start();
 			this.updateDisplay();
 			this.updateModeButtons();
 		});
 
 		// ! カスタムタイマーボタン。
 		this.setupCustomTimer();
+
+		// ! Enterキーでタイマーを開始/一時停止。
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter') {
+				const state = this.timer.getState();
+				if (state.status === 'running') {
+					this.timer.pause();
+				} else if (state.status === 'idle' || state.status === 'paused') {
+					this.clearCompletionEffects();
+					this.timer.start();
+				}
+				this.updateDisplay();
+			}
+		});
 
 		// ! 1秒ごとに表示を更新。
 		this.startUpdateLoop();
@@ -136,18 +154,36 @@ class App {
 
 	// ! ボタンの有効/無効状態を更新。
 	private updateButtons(state: TimerState): void {
+		// ! 完了時は全てのボタンを非表示。
+		if (state.remainingSeconds === 0 && state.status === 'idle') {
+			this.startBtn.classList.add('hidden');
+			this.pauseBtn.classList.add('hidden');
+			this.resetBtn.classList.add('hidden');
+			return;
+		}
+
+		// ! 通常時のボタン表示制御。
 		switch (state.status) {
 			case 'idle':
+				this.startBtn.classList.remove('hidden');
+				this.pauseBtn.classList.add('hidden');
+				this.resetBtn.classList.add('hidden');
 				this.startBtn.disabled = false;
 				this.pauseBtn.disabled = true;
 				this.resetBtn.disabled = true;
 				break;
 			case 'running':
+				this.startBtn.classList.add('hidden');
+				this.pauseBtn.classList.remove('hidden');
+				this.resetBtn.classList.remove('hidden');
 				this.startBtn.disabled = true;
 				this.pauseBtn.disabled = false;
 				this.resetBtn.disabled = false;
 				break;
 			case 'paused':
+				this.startBtn.classList.remove('hidden');
+				this.pauseBtn.classList.add('hidden');
+				this.resetBtn.classList.remove('hidden');
 				this.startBtn.disabled = false;
 				this.pauseBtn.disabled = true;
 				this.resetBtn.disabled = false;
@@ -264,10 +300,10 @@ class App {
 
 		// ! 完了メッセージを設定して表示。
 		const message = mode === 'work'
-			? '作業時間終了！お疲れ様でした！'
+			? '作業終了!'
 			: mode === 'break'
-			? '休憩時間終了！'
-			: 'カスタムタイマー終了！';
+			? '休憩終了!'
+			: 'タイマー終了!';
 		completeMessage.textContent = message;
 		completeMessage.classList.add('show');
 	}
@@ -296,10 +332,10 @@ class App {
 		}
 
 		const title = mode === 'work'
-			? '作業時間終了!'
+			? '作業終了!'
 			: mode === 'break'
-			? '休憩時間終了!'
-			: 'カスタムタイマー終了!';
+			? '休憩終了!'
+			: 'タイマー終了!';
 		const body = mode === 'work'
 			? '25分の作業お疲れ様でした!'
 			: mode === 'break'
@@ -336,50 +372,38 @@ class App {
 
 	// ! カスタムタイマーのセットアップ。
 	private setupCustomTimer(): void {
-		const customTimerBtn = document.getElementById('custom-timer-btn');
 		const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 		const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 
-		if (customTimerBtn && customMinutesInput && customSecondsInput) {
-			customTimerBtn.addEventListener('click', () => {
+		if (customMinutesInput && customSecondsInput) {
+			// ! 入力変更時にリアルタイムで反映する関数。
+			const handleInput = () => {
 				const minutes = parseInt(customMinutesInput.value || '0', 10);
 				const seconds = parseInt(customSecondsInput.value || '0', 10);
 
 				// ! 入力値の検証。
 				if (isNaN(minutes) || minutes < 0 || minutes > 999) {
-					alert('分は0〜999の範囲で入力してください。');
 					return;
 				}
 
 				if (isNaN(seconds) || seconds < 0 || seconds > 59) {
-					alert('秒は0〜59の範囲で入力してください。');
 					return;
 				}
 
-				// ! 両方0の場合はエラー。
+				// ! 両方0の場合は何もしない。
 				if (minutes === 0 && seconds === 0) {
-					alert('時間を入力してください。');
 					return;
 				}
 
-				// ! カスタムタイマーを設定。
+				// ! カスタムタイマーを設定（リアルタイム反映）。
 				this.timer.setCustomTime(minutes, seconds);
 				this.updateDisplay();
 				this.updateModeButtons();
-
-				// ! 入力欄をクリア。
-				customMinutesInput.value = '';
-				customSecondsInput.value = '';
-			});
-
-			// ! Enterキーでも設定できるようにする。
-			const handleEnter = (e: KeyboardEvent) => {
-				if (e.key === 'Enter') {
-					customTimerBtn.click();
-				}
 			};
-			customMinutesInput.addEventListener('keypress', handleEnter);
-			customSecondsInput.addEventListener('keypress', handleEnter);
+
+			// ! input イベントでリアルタイム反映。
+			customMinutesInput.addEventListener('input', handleInput);
+			customSecondsInput.addEventListener('input', handleInput);
 		}
 	}
 }

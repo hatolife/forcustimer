@@ -284,7 +284,7 @@ describe('App - UI Integration', () => {
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
 			expect(mockShowNotification).toHaveBeenCalled();
 			const callArgs = mockShowNotification.mock.calls[0];
-			expect(callArgs[0]).toBe('作業時間終了!');
+			expect(callArgs[0]).toBe('作業終了!');
 			expect(callArgs[1]).toMatchObject({
 				body: '25分の作業お疲れ様でした!',
 				icon: '/icons/icon-192x192.png',
@@ -312,7 +312,7 @@ describe('App - UI Integration', () => {
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
 			expect(mockShowNotification).toHaveBeenCalled();
 			const callArgs = mockShowNotification.mock.calls[0];
-			expect(callArgs[0]).toBe('休憩時間終了!');
+			expect(callArgs[0]).toBe('休憩終了!');
 			expect(callArgs[1]).toMatchObject({
 				body: '5分の休憩終了です!',
 				icon: '/icons/icon-192x192.png',
@@ -325,13 +325,12 @@ describe('App - UI Integration', () => {
 
 		it('カスタムタイマー完了時もService Worker経由で通知が表示されること', async () => {
 			app = new App();
-			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 
-			// ! 1分(60秒)のカスタムタイマーを設定。
+			// ! 1分(60秒)のカスタムタイマーを設定（リアルタイムで反映される）。
 			customMinutesInput.value = '1';
-			customTimerBtn.click();
+			customMinutesInput.dispatchEvent(new Event('input', { bubbles: true }));
 			startBtn.click();
 
 			// ! 60秒経過してタイマー完了。
@@ -343,7 +342,7 @@ describe('App - UI Integration', () => {
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
 			expect(mockShowNotification).toHaveBeenCalled();
 			const callArgs = mockShowNotification.mock.calls[0];
-			expect(callArgs[0]).toBe('カスタムタイマー終了!');
+			expect(callArgs[0]).toBe('タイマー終了!');
 			expect(callArgs[1]).toMatchObject({
 				body: 'カスタムタイマーが終了しました!',
 				icon: '/icons/icon-192x192.png',
@@ -398,7 +397,7 @@ describe('App - UI Integration', () => {
 			// ! 直接Notificationコンストラクタが呼ばれることを確認。
 			expect(mockNotificationConstructor).toHaveBeenCalled();
 			const callArgs = mockNotificationConstructor.mock.calls[0];
-			expect(callArgs[0]).toBe('作業時間終了!');
+			expect(callArgs[0]).toBe('作業終了!');
 			expect(callArgs[1]).toMatchObject({
 				body: '25分の作業お疲れ様でした!',
 				icon: '/icons/icon-192x192.png',
@@ -416,16 +415,15 @@ describe('App - UI Integration', () => {
 	describe('カスタムタイマー', () => {
 		it('カスタムタイマーで10分を設定すると10:00に表示が変わること', () => {
 			app = new App();
-			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			// ! 10分0秒を入力してSetボタンをクリック。
+			// ! 10分0秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '10';
 			customSecondsInput.value = '0';
-			customTimerBtn.click();
+			customMinutesInput.dispatchEvent(new Event('input', { bubbles: true }));
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('10:00');
@@ -434,16 +432,15 @@ describe('App - UI Integration', () => {
 
 		it('カスタムタイマーで5分30秒を設定すると05:30に表示が変わること', () => {
 			app = new App();
-			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 			const modeDisplay = document.getElementById('mode');
 
-			// ! 5分30秒を入力してSetボタンをクリック。
+			// ! 5分30秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '5';
 			customSecondsInput.value = '30';
-			customTimerBtn.click();
+			customMinutesInput.dispatchEvent(new Event('input', { bubbles: true }));
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:30');
@@ -452,15 +449,14 @@ describe('App - UI Integration', () => {
 
 		it('カスタムタイマーで秒のみ設定できること', () => {
 			app = new App();
-			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 
-			// ! 0分45秒を入力してSetボタンをクリック。
+			// ! 0分45秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '0';
 			customSecondsInput.value = '45';
-			customTimerBtn.click();
+			customSecondsInput.dispatchEvent(new Event('input', { bubbles: true }));
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('00:45');
@@ -472,11 +468,10 @@ describe('App - UI Integration', () => {
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
 
-			// ! 5分0秒を入力してEnterキーを押す。
+			// ! 5分0秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '5';
 			customSecondsInput.value = '0';
-			const enterEvent = new KeyboardEvent('keypress', { key: 'Enter' });
-			customMinutesInput.dispatchEvent(enterEvent);
+			customMinutesInput.dispatchEvent(new Event('input', { bubbles: true }));
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:00');
