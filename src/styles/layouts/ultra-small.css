@@ -28,8 +28,8 @@
 		font-size: 25vw;
 	}
 
-	/* コントロールボタンのパディングを削減 */
-	.controls {
+	/* ボタンエリアのパディングを削減 */
+	.button-area {
 		margin: var(--spacing-sm) var(--spacing-xs);
 		gap: 3px;
 	}
@@ -40,13 +40,6 @@
 		font-size: clamp(11px, 3vw, 16px);
 		letter-spacing: 0.3px;
 		min-height: var(--min-touch-target);
-	}
-
-	/* モード切替ボタンのパディングを削減 */
-	.mode-switch {
-		margin-top: var(--spacing-sm);
-		gap: 3px;
-		padding: 0 var(--spacing-xs);
 	}
 
 	.mode-btn {
