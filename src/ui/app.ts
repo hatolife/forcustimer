@@ -271,14 +271,9 @@ class App {
 		completeMessage.classList.remove('show');
 	}
 
-	// ! 通知を表示（Service Worker経由・iOS PWA対応）。
-	private showNotification(mode: TimerMode): void {
+	// ! 通知を表示（PC・iOS PWA両対応）。
+	private async showNotification(mode: TimerMode): Promise<void> {
 		if (!('Notification' in window) || Notification.permission !== 'granted') {
-			return;
-		}
-
-		// ! Service Workerが利用できない場合は何もしない。
-		if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
 			return;
 		}
 
@@ -293,16 +288,31 @@ class App {
 			? '5分の休憩終了です!'
 			: 'カスタムタイマーが終了しました!';
 
-		// ! Service Workerへメッセージを送信。
-		navigator.serviceWorker.controller.postMessage({
-			type: 'SHOW_NOTIFICATION',
-			payload: {
-				title: title,
-				body: body,
-				icon: '/icons/icon-192x192.png',
-				badge: '/icons/icon-96x96.png'
+		const options: NotificationOptions = {
+			body: body,
+			icon: '/icons/icon-192x192.png',
+			badge: '/icons/icon-96x96.png',
+			requireInteraction: false,
+			tag: 'timer-complete'
+		};
+
+		// ! Service Worker経由で通知を表示（iOS PWA対応）。
+		if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+			try {
+				const registration = await navigator.serviceWorker.ready;
+				await registration.showNotification(title, options);
+				return;
+			} catch (error) {
+				console.warn('Service Worker notification failed, falling back to direct notification:', error);
 			}
-		});
+		}
+
+		// ! フォールバック: 直接通知を表示（PCブラウザ対応）。
+		try {
+			new Notification(title, options);
+		} catch (error) {
+			console.error('Failed to show notification:', error);
+		}
 	}
 
 	// ! カスタムタイマーのセットアップ。

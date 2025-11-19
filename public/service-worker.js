@@ -1,6 +1,6 @@
 // ! Service Worker - PWAのオフライン対応とキャッシュ管理。
 
-const CACHE_NAME = 'focus-timer-v12';
+const CACHE_NAME = 'focus-timer-v13';
 const urlsToCache = [
 	'/',
 	'/index.html',
@@ -73,19 +73,23 @@ self.addEventListener('fetch', (event) => {
 	);
 });
 
-// ! メッセージハンドラー（通知表示用・iOS PWA対応）。
-self.addEventListener('message', (event) => {
-	if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
-		const { title, body, icon, badge } = event.data.payload;
+// ! 通知クリック時のハンドラー（アプリを開く）。
+self.addEventListener('notificationclick', (event) => {
+	event.notification.close();
 
-		// ! event.waitUntil()を使用してiOS Safari対応。
-		// ! これがないとiOSで通知がブロックされる。
-		event.waitUntil(
-			self.registration.showNotification(title, {
-				body: body,
-				icon: icon,
-				badge: badge
-			})
-		);
-	}
+	// ! アプリケーションを開く。
+	event.waitUntil(
+		clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+			// ! 既に開いているウィンドウがあればフォーカス。
+			for (const client of clientList) {
+				if (client.url === '/' && 'focus' in client) {
+					return client.focus();
+				}
+			}
+			// ! なければ新しいウィンドウを開く。
+			if (clients.openWindow) {
+				return clients.openWindow('/');
+			}
+		})
+	);
 });

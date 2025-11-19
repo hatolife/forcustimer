@@ -246,7 +246,7 @@ describe('App - UI Integration', () => {
 	});
 
 	describe('通知機能（Service Worker経由・iOS PWA対応）', () => {
-		let mockPostMessage: jest.Mock;
+		let mockShowNotification: jest.Mock;
 
 		beforeEach(() => {
 			// ! Notification APIのモック。
@@ -256,16 +256,12 @@ describe('App - UI Integration', () => {
 			} as any;
 
 			// ! Service Workerのモック。
-			mockPostMessage = jest.fn();
+			mockShowNotification = jest.fn().mockResolvedValue(undefined);
 			Object.defineProperty(navigator, 'serviceWorker', {
 				value: {
-					controller: {
-						postMessage: mockPostMessage
-					},
+					controller: {},
 					ready: Promise.resolve({
-						active: {
-							postMessage: mockPostMessage
-						}
+						showNotification: mockShowNotification
 					})
 				},
 				writable: true,
@@ -273,7 +269,7 @@ describe('App - UI Integration', () => {
 			});
 		});
 
-		it('タイマー完了時にService WorkerへメッセージがpostされることWork', () => {
+		it('タイマー完了時にService Worker経由で通知が表示されることWork', async () => {
 			app = new App();
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
 
@@ -282,19 +278,20 @@ describe('App - UI Integration', () => {
 			// ! 25分経過してタイマー完了。
 			jest.advanceTimersByTime(1500100);
 
-			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
-			expect(mockPostMessage).toHaveBeenCalledWith({
-				type: 'SHOW_NOTIFICATION',
-				payload: {
-					title: '作業時間終了!',
-					body: '25分の作業お疲れ様でした!',
-					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png'
-				}
+			// ! Promiseの解決を待つ。
+			await Promise.resolve();
+
+			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
+			expect(mockShowNotification).toHaveBeenCalledWith('作業時間終了!', {
+				body: '25分の作業お疲れ様でした!',
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+				requireInteraction: false,
+				tag: 'timer-complete'
 			});
 		});
 
-		it('Break完了時もService Workerへメッセージがpostされること', () => {
+		it('Break完了時もService Worker経由で通知が表示されること', async () => {
 			app = new App();
 			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
 			const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
@@ -305,19 +302,20 @@ describe('App - UI Integration', () => {
 			// ! 5分経過してタイマー完了。
 			jest.advanceTimersByTime(300100);
 
-			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
-			expect(mockPostMessage).toHaveBeenCalledWith({
-				type: 'SHOW_NOTIFICATION',
-				payload: {
-					title: '休憩時間終了!',
-					body: '5分の休憩終了です!',
-					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png'
-				}
+			// ! Promiseの解決を待つ。
+			await Promise.resolve();
+
+			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
+			expect(mockShowNotification).toHaveBeenCalledWith('休憩時間終了!', {
+				body: '5分の休憩終了です!',
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+				requireInteraction: false,
+				tag: 'timer-complete'
 			});
 		});
 
-		it('カスタムタイマー完了時もService Workerへメッセージがpostされること', () => {
+		it('カスタムタイマー完了時もService Worker経由で通知が表示されること', async () => {
 			app = new App();
 			const customTimerBtn = document.getElementById('custom-timer-btn') as HTMLButtonElement;
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
@@ -331,19 +329,20 @@ describe('App - UI Integration', () => {
 			// ! 60秒経過してタイマー完了。
 			jest.advanceTimersByTime(60100);
 
-			// ! Service WorkerへのpostMessageが呼ばれたことを確認。
-			expect(mockPostMessage).toHaveBeenCalledWith({
-				type: 'SHOW_NOTIFICATION',
-				payload: {
-					title: 'カスタムタイマー終了!',
-					body: 'カスタムタイマーが終了しました!',
-					icon: '/icons/icon-192x192.png',
-					badge: '/icons/icon-96x96.png'
-				}
+			// ! Promiseの解決を待つ。
+			await Promise.resolve();
+
+			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
+			expect(mockShowNotification).toHaveBeenCalledWith('カスタムタイマー終了!', {
+				body: 'カスタムタイマーが終了しました!',
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+				requireInteraction: false,
+				tag: 'timer-complete'
 			});
 		});
 
-		it('通知許可がない場合はService Workerへメッセージがpostされないこと', () => {
+		it('通知許可がない場合は通知が表示されないこと', async () => {
 			global.Notification = {
 				permission: 'denied',
 				requestPermission: jest.fn()
@@ -355,11 +354,19 @@ describe('App - UI Integration', () => {
 			startBtn.click();
 			jest.advanceTimersByTime(1500100);
 
-			// ! Service WorkerへのpostMessageが呼ばれないことを確認。
-			expect(mockPostMessage).not.toHaveBeenCalled();
+			// ! Promiseの解決を待つ。
+			await Promise.resolve();
+
+			// ! Service WorkerのshowNotificationが呼ばれないことを確認。
+			expect(mockShowNotification).not.toHaveBeenCalled();
 		});
 
-		it('Service Workerが利用できない場合は何もしないこと', () => {
+		it('Service Workerが利用できない場合はフォールバックとして直接通知を表示すること', async () => {
+			// ! 直接通知のモック。
+			const mockNotificationConstructor = jest.fn();
+			global.Notification = mockNotificationConstructor as any;
+			(global.Notification as any).permission = 'granted';
+
 			// ! Service Workerを削除。
 			Object.defineProperty(navigator, 'serviceWorker', {
 				value: undefined,
@@ -372,6 +379,18 @@ describe('App - UI Integration', () => {
 
 			startBtn.click();
 			jest.advanceTimersByTime(1500100);
+
+			// ! Promiseの解決を待つ。
+			await Promise.resolve();
+
+			// ! 直接Notificationコンストラクタが呼ばれることを確認。
+			expect(mockNotificationConstructor).toHaveBeenCalledWith('作業時間終了!', {
+				body: '25分の作業お疲れ様でした!',
+				icon: '/icons/icon-192x192.png',
+				badge: '/icons/icon-96x96.png',
+				requireInteraction: false,
+				tag: 'timer-complete'
+			});
 
 			// ! エラーが投げられないことを確認（正常終了）。
 			expect(true).toBe(true);
