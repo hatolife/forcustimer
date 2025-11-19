@@ -288,12 +288,13 @@ class App {
 			? '5分の休憩終了です!'
 			: 'カスタムタイマーが終了しました!';
 
-		const options: NotificationOptions = {
+		const options: NotificationOptions & { renotify?: boolean; } = {
 			body: body,
 			icon: '/icons/icon-192x192.png',
 			badge: '/icons/icon-96x96.png',
 			requireInteraction: false,
-			tag: 'timer-complete'
+			tag: `timer-complete-${Date.now()}`, // ! 一意のタグで毎回新しい通知を表示。
+			renotify: true // ! 同じタグでも再通知。
 		};
 
 		// ! Service Worker経由で通知を表示（iOS PWA対応）。

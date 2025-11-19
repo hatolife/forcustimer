@@ -282,13 +282,17 @@ describe('App - UI Integration', () => {
 			await Promise.resolve();
 
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
-			expect(mockShowNotification).toHaveBeenCalledWith('作業時間終了!', {
+			expect(mockShowNotification).toHaveBeenCalled();
+			const callArgs = mockShowNotification.mock.calls[0];
+			expect(callArgs[0]).toBe('作業時間終了!');
+			expect(callArgs[1]).toMatchObject({
 				body: '25分の作業お疲れ様でした!',
 				icon: '/icons/icon-192x192.png',
 				badge: '/icons/icon-96x96.png',
 				requireInteraction: false,
-				tag: 'timer-complete'
+				renotify: true
 			});
+			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
 		});
 
 		it('Break完了時もService Worker経由で通知が表示されること', async () => {
@@ -306,13 +310,17 @@ describe('App - UI Integration', () => {
 			await Promise.resolve();
 
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
-			expect(mockShowNotification).toHaveBeenCalledWith('休憩時間終了!', {
+			expect(mockShowNotification).toHaveBeenCalled();
+			const callArgs = mockShowNotification.mock.calls[0];
+			expect(callArgs[0]).toBe('休憩時間終了!');
+			expect(callArgs[1]).toMatchObject({
 				body: '5分の休憩終了です!',
 				icon: '/icons/icon-192x192.png',
 				badge: '/icons/icon-96x96.png',
 				requireInteraction: false,
-				tag: 'timer-complete'
+				renotify: true
 			});
+			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
 		});
 
 		it('カスタムタイマー完了時もService Worker経由で通知が表示されること', async () => {
@@ -333,13 +341,17 @@ describe('App - UI Integration', () => {
 			await Promise.resolve();
 
 			// ! Service WorkerのshowNotificationが呼ばれたことを確認。
-			expect(mockShowNotification).toHaveBeenCalledWith('カスタムタイマー終了!', {
+			expect(mockShowNotification).toHaveBeenCalled();
+			const callArgs = mockShowNotification.mock.calls[0];
+			expect(callArgs[0]).toBe('カスタムタイマー終了!');
+			expect(callArgs[1]).toMatchObject({
 				body: 'カスタムタイマーが終了しました!',
 				icon: '/icons/icon-192x192.png',
 				badge: '/icons/icon-96x96.png',
 				requireInteraction: false,
-				tag: 'timer-complete'
+				renotify: true
 			});
+			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
 		});
 
 		it('通知許可がない場合は通知が表示されないこと', async () => {
@@ -384,13 +396,17 @@ describe('App - UI Integration', () => {
 			await Promise.resolve();
 
 			// ! 直接Notificationコンストラクタが呼ばれることを確認。
-			expect(mockNotificationConstructor).toHaveBeenCalledWith('作業時間終了!', {
+			expect(mockNotificationConstructor).toHaveBeenCalled();
+			const callArgs = mockNotificationConstructor.mock.calls[0];
+			expect(callArgs[0]).toBe('作業時間終了!');
+			expect(callArgs[1]).toMatchObject({
 				body: '25分の作業お疲れ様でした!',
 				icon: '/icons/icon-192x192.png',
 				badge: '/icons/icon-96x96.png',
 				requireInteraction: false,
-				tag: 'timer-complete'
+				renotify: true
 			});
+			expect(callArgs[1].tag).toMatch(/^timer-complete-\d+$/);
 
 			// ! エラーが投げられないことを確認（正常終了）。
 			expect(true).toBe(true);
