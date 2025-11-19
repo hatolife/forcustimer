@@ -35,9 +35,6 @@ class App {
 
 		// ! 通知許可ベルアイコンをセットアップ（iOS PWA対応）。
 		this.setupNotificationBellIcon();
-
-		// ! 初回アクセス時に通知許可をリクエスト。
-		this.requestNotificationPermissionOnLoad();
 	}
 
 	// ! DOM要素を安全に取得するヘルパーメソッド。
@@ -190,18 +187,23 @@ class App {
 			return;
 		}
 
+		const bellButton = document.getElementById('notification-bell');
 		const bellIcon = document.querySelector('.bell-icon');
 		const bellSlash = document.querySelector('.bell-slash') as HTMLElement;
 
-		if (!bellIcon || !bellSlash) {
+		if (!bellButton || !bellIcon || !bellSlash) {
 			return;
 		}
 
 		// ! 通知許可状態に応じて表示を切り替え。
 		if (Notification.permission === 'granted') {
+			// ! 許可済み: ボタンを非表示。
+			bellButton.classList.add('hidden');
 			bellIcon.classList.remove('disabled');
 			bellSlash.style.display = 'none';
 		} else {
+			// ! 未許可: ボタンを表示し、斜線を表示。
+			bellButton.classList.remove('hidden');
 			bellIcon.classList.add('disabled');
 			bellSlash.style.display = '';
 		}
@@ -210,22 +212,36 @@ class App {
 	// ! ベルアイコンクリック時のハンドラー。
 	private async handleNotificationBellClick(): Promise<void> {
 		if (!('Notification' in window)) {
+			console.warn('このブラウザは通知をサポートしていません');
 			return;
 		}
 
 		// ! 既に許可済みの場合は何もしない。
 		if (Notification.permission === 'granted') {
+			console.log('通知は既に許可されています');
 			return;
 		}
 
 		try {
 			// ! 通知許可をリクエスト。
-			await Notification.requestPermission();
+			console.log('通知許可をリクエストします...');
+			const permission = await Notification.requestPermission();
+			console.log('通知許可リクエスト結果:', permission);
 
 			// ! 許可状態が変わったらアイコンを更新。
 			this.updateNotificationBellIcon();
+
+			// ! 許可された場合はテスト通知を表示。
+			if (permission === 'granted') {
+				console.log('通知が許可されました。テスト通知を表示します。');
+				new Notification('通知が有効になりました', {
+					body: 'タイマー終了時に通知が表示されます',
+					icon: '/icons/icon-192x192.png',
+					tag: 'notification-enabled'
+				});
+			}
 		} catch (error) {
-			console.error('Failed to request notification permission:', error);
+			console.error('通知許可リクエストに失敗:', error);
 		}
 	}
 
@@ -272,31 +288,6 @@ class App {
 		timerDisplay?.classList.remove('completed');
 		timeDisplay?.classList.remove('completed');
 		completeMessage.classList.remove('show');
-	}
-
-	// ! 初回アクセス時に通知許可をリクエスト。
-	private async requestNotificationPermissionOnLoad(): Promise<void> {
-		if (!('Notification' in window)) {
-			console.log('このブラウザは通知をサポートしていません');
-			return;
-		}
-
-		// ! 既に許可済みまたは拒否済みの場合は何もしない。
-		if (Notification.permission !== 'default') {
-			console.log('通知許可状態:', Notification.permission);
-			return;
-		}
-
-		// ! ページ読み込み後、少し待ってから許可をリクエスト。
-		setTimeout(async () => {
-			try {
-				const permission = await Notification.requestPermission();
-				console.log('通知許可リクエスト結果:', permission);
-				this.updateNotificationBellIcon();
-			} catch (error) {
-				console.error('通知許可リクエストエラー:', error);
-			}
-		}, 1000);
 	}
 
 	// ! 通知を表示（PC・iOS PWA両対応）。
