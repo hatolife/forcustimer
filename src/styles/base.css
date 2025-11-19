@@ -130,6 +130,10 @@ h1 {
 	color: var(--color-white);
 }
 
+.mode-btn.hidden {
+	display: none;
+}
+
 /* タイマー完了時のスタイル */
 .time.completed {
 	color: var(--color-success);
@@ -207,6 +211,10 @@ h1 {
 .custom-timer-input::placeholder {
 	color: var(--color-text-light);
 	font-weight: 400;
+}
+
+.custom-timer-input-group.hidden {
+	display: none;
 }
 
 /* 通知許可ベルアイコン（iOS PWA対応） */
