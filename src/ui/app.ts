@@ -162,6 +162,15 @@ class App {
 			return;
 		}
 
+		// ! workボタン、breakボタン、カスタムタイマー入力欄の表示制御。
+		const isRunning = state.status === 'running';
+		this.workModeBtn.classList.toggle('hidden', isRunning);
+		this.breakModeBtn.classList.toggle('hidden', isRunning);
+		const customTimerInputGroup = document.querySelector('.custom-timer-input-group') as HTMLElement;
+		if (customTimerInputGroup) {
+			customTimerInputGroup.classList.toggle('hidden', isRunning);
+		}
+
 		// ! 通常時のボタン表示制御。
 		switch (state.status) {
 			case 'idle':
