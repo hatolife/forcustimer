@@ -6,7 +6,6 @@ import { Timer, TimerMode, TimerState } from '../core/timer';
 class App {
 	private timer: Timer;
 	private timeDisplay: HTMLElement;
-	private modeDisplay: HTMLElement;
 	private startBtn: HTMLButtonElement;
 	private pauseBtn: HTMLButtonElement;
 	private resetBtn: HTMLButtonElement;
@@ -20,7 +19,6 @@ class App {
 
 		// ! DOM要素を取得。
 		this.timeDisplay = this.getElement('time');
-		this.modeDisplay = this.getElement('mode');
 		this.startBtn = this.getElement('start-btn') as HTMLButtonElement;
 		this.pauseBtn = this.getElement('pause-btn') as HTMLButtonElement;
 		this.resetBtn = this.getElement('reset-btn') as HTMLButtonElement;
@@ -133,13 +131,6 @@ class App {
 
 		// ! 時間表示を更新。
 		this.timeDisplay.textContent = this.formatTime(state.remainingSeconds);
-
-		// ! モード表示を更新。
-		this.modeDisplay.textContent = state.mode === 'work'
-			? 'Work'
-			: state.mode === 'break'
-			? 'Break'
-			: 'Custom';
 
 		// ! ボタンの状態を更新。
 		this.updateButtons(state);

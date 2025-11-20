@@ -71,14 +71,12 @@ describe('App - UI Integration', () => {
 	});
 
 	describe('初期表示', () => {
-		it('初期状態でWork mode, 25:00が表示されること', () => {
+		it('初期状態で25:00が表示されること', () => {
 			app = new App();
 
 			const timeDisplay = document.getElementById('time');
-			const modeDisplay = document.getElementById('mode');
 
 			expect(timeDisplay?.textContent).toBe('25:00');
-			expect(modeDisplay?.textContent).toBe('Work');
 		});
 
 		it('初期状態でStartボタンのみ有効であること', () => {
@@ -176,14 +174,12 @@ describe('App - UI Integration', () => {
 			app = new App();
 			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
-			const modeDisplay = document.getElementById('mode');
 
 			// ! Breakモードに切替。
 			breakBtn.click();
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:00');
-			expect(modeDisplay?.textContent).toBe('Break');
 		});
 
 		it('Workボタンをクリックすると25:00に表示が変わること', () => {
@@ -191,7 +187,6 @@ describe('App - UI Integration', () => {
 			const breakBtn = document.getElementById('break-mode-btn') as HTMLButtonElement;
 			const workBtn = document.getElementById('work-mode-btn') as HTMLButtonElement;
 			const timeDisplay = document.getElementById('time');
-			const modeDisplay = document.getElementById('mode');
 
 			// ! Breakモードに切替。
 			breakBtn.click();
@@ -202,7 +197,6 @@ describe('App - UI Integration', () => {
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('25:00');
-			expect(modeDisplay?.textContent).toBe('Work');
 		});
 
 		it('モード切替時にアクティブクラスが切り替わること', () => {
@@ -418,7 +412,6 @@ describe('App - UI Integration', () => {
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
-			const modeDisplay = document.getElementById('mode');
 
 			// ! 10分0秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '10';
@@ -427,7 +420,6 @@ describe('App - UI Integration', () => {
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('10:00');
-			expect(modeDisplay?.textContent).toBe('Custom');
 		});
 
 		it('カスタムタイマーで5分30秒を設定すると05:30に表示が変わること', () => {
@@ -435,7 +427,6 @@ describe('App - UI Integration', () => {
 			const customMinutesInput = document.getElementById('custom-minutes') as HTMLInputElement;
 			const customSecondsInput = document.getElementById('custom-seconds') as HTMLInputElement;
 			const timeDisplay = document.getElementById('time');
-			const modeDisplay = document.getElementById('mode');
 
 			// ! 5分30秒を入力（リアルタイムで反映される）。
 			customMinutesInput.value = '5';
@@ -444,7 +435,6 @@ describe('App - UI Integration', () => {
 
 			// ! 表示を確認。
 			expect(timeDisplay?.textContent).toBe('05:30');
-			expect(modeDisplay?.textContent).toBe('Custom');
 		});
 
 		it('カスタムタイマーで秒のみ設定できること', () => {
