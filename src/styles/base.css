@@ -130,6 +130,10 @@ h1 {
 	color: var(--color-white);
 }
 
+.mode-btn.hidden {
+	display: none;
+}
+
 /* タイマー完了時のスタイル */
 .time.completed {
 	color: var(--color-success);
@@ -179,6 +183,10 @@ h1 {
 	max-width: 400px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.custom-timer-input-group.hidden {
+	display: none;
 }
 
 .custom-timer-input {
