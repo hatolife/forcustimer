@@ -146,13 +146,15 @@ CC0 1.0 Universal (Public Domain)
 - **Pause**: 非表示
 - **Reset**: 非表示
 - **Work/Breakボタン**: 表示（クリックで即開始）
+- **カスタムタイマー入力欄**: 表示
 
 #### 4.2.2 実行中 (running状態)
 
 - **Start**: 非表示
 - **Pause**: 表示
 - **Reset**: 表示
-- **Work/Breakボタン**: 表示（クリックで即開始）
+- **Work/Breakボタン**: 非表示
+- **カスタムタイマー入力欄**: 非表示
 
 #### 4.2.3 一時停止中 (paused状態)
 
@@ -160,6 +162,7 @@ CC0 1.0 Universal (Public Domain)
 - **Pause**: 非表示
 - **Reset**: 表示
 - **Work/Breakボタン**: 表示（クリックで即開始）
+- **カスタムタイマー入力欄**: 表示
 
 #### 4.2.4 完了時 (completed状態)
 
@@ -167,6 +170,7 @@ CC0 1.0 Universal (Public Domain)
 - **Pause**: 非表示
 - **Reset**: 非表示
 - **Work/Breakボタン**: 表示（クリックで即開始）
+- **カスタムタイマー入力欄**: 表示
 
 ### 4.3 キーボード操作
 
